@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Studio by Cognospace</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- ONE consistent, friendly, rounded font everywhere: Poppins -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- TensorFlow.js core -->
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.20.0/dist/tf.min.js"></script>
+<!-- Image model: MobileNet + KNN -->
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.1/dist/mobilenet.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/knn-classifier@1.2.6/dist/knn-classifier.min.js"></script>
+<!-- Pose model: PoseNet (body) + Handpose (fingers) -->
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/posenet@2.2.2/dist/posenet.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/handpose@0.0.7/dist/handpose.min.js"></script>
+<!-- Sound model: Speech Commands (transfer learning) -->
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/speech-commands@0.5.4/dist/speech-commands.min.js"></script>
+
+<style>
+:root{
+  --orange:#FF7A3D; --orange-d:#F2611C;
+  --sky:#37AEE2; --sky-d:#2A93C4;
+  --mint:#27CE9B; --mint-d:#1FAE83;
+  --sun:#FFC23C; --grape:#9B7BE8; --grape-d:#7B5BD6; --bubble:#FF6FA5;
+  --cream:#FFF8F2; --cream2:#FFEDE0; --paper:#ffffff;
+  --ink:#3A2E2A; --ink2:#7C6B62; --line:#FFE0CC;
+  --sh:0 12px 34px rgba(242,97,28,.14); --sh-s:0 5px 16px rgba(242,97,28,.10);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  font-family:'Poppins',system-ui,sans-serif; color:var(--ink); background:var(--cream);
+  background-image:
+    radial-gradient(circle at 10% 12%,#FFE7D6 0,transparent 34%),
+    radial-gradient(circle at 92% 6%,#D9F1FF 0,transparent 32%),
+    radial-gradient(circle at 86% 94%,#DCFBF0 0,transparent 36%),
+    radial-gradient(circle at 12% 92%,#EFE6FF 0,transparent 34%);
+  min-height:100vh; overflow-x:hidden; line-height:1.35; font-weight:500;
+}
+.hidden{display:none !important;}
+button{font-family:inherit;}
+.doodle{position:fixed;z-index:0;opacity:.5;pointer-events:none;animation:float 7s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-15px) rotate(8deg)}}
+@media (prefers-reduced-motion:reduce){.doodle,*{animation:none!important;}}
+
+/* ===== LANDING ===== */
+#landing{position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 18px;text-align:center;}
+.brand-title{font-size:clamp(54px,11vw,116px);font-weight:800;color:var(--orange);line-height:.9;letter-spacing:-1px;text-shadow:0 6px 0 rgba(242,97,28,.16);animation:pop .55s cubic-bezier(.34,1.56,.64,1);}
+.brand-title .a{color:var(--grape);}
+@keyframes pop{0%{transform:scale(.7);opacity:0}100%{transform:scale(1);opacity:1}}
+.by-row{display:flex;flex-direction:column;align-items:center;gap:10px;margin:16px 0 4px;}
+.by-label{font-size:13px;letter-spacing:4px;color:var(--ink2);font-weight:700;}
+.logo-slot{background:var(--paper);border-radius:18px;padding:10px 22px;box-shadow:var(--sh-s);display:inline-flex;align-items:center;cursor:pointer;transition:.15s;}
+.logo-slot:hover{transform:translateY(-2px);box-shadow:var(--sh);}
+.logo-slot img{height:50px;display:block;}
+.tagline{font-size:clamp(16px,2.3vw,20px);color:var(--ink2);font-weight:600;max-width:520px;margin:18px auto 0;}
+.tagline .hl{color:var(--orange);}
+.session-card{position:relative;z-index:2;background:var(--paper);border-radius:30px;padding:34px 32px;box-shadow:var(--sh);max-width:480px;width:100%;margin:32px auto 0;border:4px solid #fff;animation:rise .65s .12s both cubic-bezier(.22,1,.36,1);}
+@keyframes rise{0%{transform:translateY(36px);opacity:0}100%{transform:translateY(0);opacity:1}}
+.session-card h2{font-size:27px;font-weight:700;}
+.session-card .sub{color:var(--ink2);font-size:14.5px;font-weight:600;margin-bottom:20px;}
+.field{text-align:left;margin-bottom:15px;}
+.field label{display:block;font-weight:700;font-size:13.5px;margin-bottom:6px;}
+.field input{width:100%;padding:13px 16px;border-radius:14px;border:2.5px solid var(--line);font-family:inherit;font-size:15px;font-weight:600;color:var(--ink);background:var(--cream);transition:.18s;}
+.field input:focus{outline:none;border-color:var(--orange);background:#fff;box-shadow:0 0 0 4px rgba(255,122,61,.15);}
+.field.err input{border-color:var(--bubble);background:#FFF0F5;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:13px;}
+.btn-primary{width:100%;margin-top:8px;padding:16px;border:none;border-radius:18px;cursor:pointer;background:linear-gradient(180deg,var(--orange),var(--orange-d));color:#fff;font-size:21px;font-weight:700;box-shadow:0 8px 0 rgba(242,97,28,.34);transition:.12s;}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 0 rgba(242,97,28,.34);}
+.btn-primary:active{transform:translateY(4px);box-shadow:0 4px 0 rgba(242,97,28,.34);}
+
+/* ===== APP / NAV ===== */
+#app{position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column;}
+.navbar{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:11px 20px;background:rgba(255,255,255,.86);backdrop-filter:blur(10px);border-bottom:3px solid var(--line);box-shadow:0 4px 18px rgba(242,97,28,.07);}
+.nav-brand{display:flex;align-items:center;gap:11px;}
+.nav-brand .mark{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,var(--orange),var(--bubble));display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:var(--sh-s);}
+.nav-brand .ntxt{font-weight:700;font-size:22px;line-height:.95;}
+.nav-brand .ntxt small{display:block;font-size:10px;letter-spacing:2px;color:var(--ink2);font-weight:600;}
+.nav-logo{display:flex;align-items:center;gap:8px;text-decoration:none;}
+.nav-logo span{font-size:12px;color:var(--ink2);font-weight:700;}
+.nav-logo img{height:34px;transition:.15s;}
+.nav-logo:hover img{transform:scale(1.05);}
+.nav-spacer{flex:1;}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:9px 15px;border-radius:999px;font-weight:700;font-size:13.5px;background:#fff;box-shadow:var(--sh-s);border:2px solid var(--line);}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--sun);animation:blink 1.1s infinite;}
+.dot.ready{background:var(--mint);animation:none;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.pill .n{color:var(--orange);}
+.btn-end{display:inline-flex;align-items:center;gap:7px;padding:10px 17px;border-radius:999px;border:none;cursor:pointer;background:linear-gradient(180deg,#FF7E8A,#F0566B);color:#fff;font-weight:700;font-size:14px;box-shadow:0 5px 0 rgba(214,55,75,.4);transition:.12s;}
+.btn-end:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(214,55,75,.4);}
+.session-strip{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;padding:10px 16px;}
+.chip{font-size:12.5px;font-weight:700;color:var(--ink2);background:#fff;padding:5px 13px;border-radius:999px;border:2px solid #FFE9DC;}
+.chip b{color:var(--orange);}
+
+/* ===== PROJECT PICKER ===== */
+.section-title{text-align:center;font-weight:700;font-size:24px;margin:18px auto 4px;}
+.section-sub{text-align:center;color:var(--ink2);font-weight:600;font-size:14.5px;max-width:560px;margin:0 auto 16px;padding:0 16px;}
+.picker{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;padding:6px 18px 8px;max-width:920px;margin:0 auto;}
+.pcard{flex:1;min-width:230px;max-width:280px;background:#fff;border-radius:24px;padding:24px 20px;text-align:center;cursor:pointer;border:4px solid #fff;box-shadow:var(--sh-s);transition:.16s;position:relative;overflow:hidden;}
+.pcard:hover{transform:translateY(-5px);box-shadow:var(--sh);}
+.pcard .emoji{font-size:50px;display:block;margin-bottom:8px;}
+.pcard h3{font-size:22px;font-weight:700;}
+.pcard p{color:var(--ink2);font-weight:600;font-size:13.5px;margin-top:4px;}
+.pcard .ribbon{position:absolute;top:0;left:0;right:0;height:8px;}
+.pcard.image .ribbon{background:var(--sky);} .pcard.pose .ribbon{background:var(--grape);} .pcard.sound .ribbon{background:var(--mint);}
+
+/* ===== MODE TABS ===== */
+.topbar{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;padding:18px 16px 4px;}
+.btn-back{border:2px solid var(--line);background:#fff;border-radius:999px;padding:9px 16px;font-weight:700;font-size:14px;cursor:pointer;color:var(--ink2);}
+.btn-back:hover{border-color:var(--orange);color:var(--orange);}
+.mode-tabs{display:inline-flex;background:#fff;border-radius:999px;padding:6px;gap:6px;box-shadow:var(--sh-s);border:3px solid #FFEEE2;}
+.mode-tab{border:none;cursor:pointer;background:transparent;padding:11px 24px;border-radius:999px;font-weight:700;font-size:16.5px;color:var(--ink2);transition:.18s;display:flex;align-items:center;gap:8px;}
+.mode-tab.learn.active{color:#fff;background:linear-gradient(180deg,var(--sky),var(--sky-d));box-shadow:0 4px 0 rgba(42,147,196,.4);}
+.mode-tab.play.active{color:#fff;background:linear-gradient(180deg,var(--mint),var(--mint-d));box-shadow:0 4px 0 rgba(31,174,131,.4);}
+.stage-hint{text-align:center;color:var(--ink2);font-weight:600;font-size:14px;margin:8px auto 0;max-width:600px;padding:0 16px;}
+
+/* ===== WORKSPACE ===== */
+.workspace{max-width:1120px;margin:0 auto;width:100%;padding:14px 18px 30px;flex:1;}
+.grid{display:grid;grid-template-columns:minmax(0,1.04fr) minmax(0,1fr);gap:20px;align-items:start;}
+@media(max-width:880px){.grid{grid-template-columns:1fr;}}
+.panel{background:#fff;border-radius:24px;padding:18px;box-shadow:var(--sh-s);border:3px solid #fff;margin-bottom:20px;}
+.panel h3{font-size:18.5px;font-weight:700;display:flex;align-items:center;gap:9px;margin-bottom:13px;}
+.panel h3 .ic{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;}
+
+.cam-box{position:relative;border-radius:18px;overflow:hidden;background:#1d1813;aspect-ratio:4/3;}
+.cam-box video,.cam-box canvas.layer{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;}
+.cam-box canvas.layer{z-index:2;pointer-events:none;}
+.cam-off{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;gap:6px;text-align:center;padding:18px;}
+.cam-off .big{font-size:40px;}
+.cam-flip{position:absolute;top:10px;right:10px;z-index:4;border:none;cursor:pointer;width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.92);font-size:18px;box-shadow:var(--sh-s);}
+.cam-tools{display:flex;gap:10px;margin-top:12px;}
+.btn-soft{flex:1;border:none;cursor:pointer;padding:12px;border-radius:14px;font-weight:700;font-size:15px;background:var(--cream2);color:var(--ink);transition:.15s;border:2px solid transparent;}
+.btn-soft:hover{border-color:var(--orange);} .btn-soft.on{background:var(--orange);color:#fff;}
+
+/* mic visual */
+.mic-box{border-radius:18px;background:#241d17;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.mic-box canvas{width:100%;height:100%;}
+.mic-off{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;gap:6px;}
+.mic-off .big{font-size:44px;}
+
+/* classes */
+.add-class{display:flex;gap:10px;margin-bottom:13px;}
+.add-class input{flex:1;padding:12px 14px;border-radius:13px;border:2.5px solid #E6F4FB;background:#F4FBFF;font-family:inherit;font-weight:700;font-size:14.5px;color:var(--ink);}
+.add-class input:focus{outline:none;border-color:var(--sky);}
+.btn-add{border:none;cursor:pointer;padding:0 18px;border-radius:13px;background:var(--sky);color:#fff;font-weight:700;font-size:15px;box-shadow:0 4px 0 rgba(42,147,196,.4);}
+.btn-add:active{transform:translateY(2px);}
+.class-card{border-radius:16px;padding:13px;margin-bottom:11px;background:var(--cream);border:2.5px solid #fff;box-shadow:var(--sh-s);}
+.class-head{display:flex;align-items:center;gap:10px;margin-bottom:9px;}
+.class-swatch{width:18px;height:18px;border-radius:6px;flex:none;}
+.class-name{font-weight:700;font-size:16px;flex:1;}
+.class-count{font-weight:700;font-size:12.5px;color:var(--ink2);background:#fff;padding:3px 10px;border-radius:999px;}
+.class-del{border:none;background:#fff;cursor:pointer;width:28px;height:28px;border-radius:8px;color:var(--bubble);font-size:14px;}
+.thumbs{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:9px;min-height:4px;}
+.thumbs img{width:34px;height:34px;border-radius:7px;object-fit:cover;border:2px solid #fff;box-shadow:0 2px 5px rgba(0,0,0,.1);}
+.btn-cap{width:100%;border:none;cursor:pointer;padding:11px;border-radius:12px;font-weight:700;font-size:14px;color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;transition:.1s;}
+.btn-cap:active{transform:scale(.97);}
+.empty-classes{text-align:center;color:var(--ink2);font-weight:600;padding:20px 10px;font-size:14px;}
+.empty-classes .em{font-size:34px;display:block;margin-bottom:7px;}
+.btn-build{width:100%;margin-top:14px;border:none;cursor:pointer;padding:16px;border-radius:18px;font-weight:700;font-size:19px;background:linear-gradient(180deg,var(--grape),var(--grape-d));color:#fff;box-shadow:0 7px 0 rgba(102,74,189,.4);display:flex;align-items:center;justify-content:center;gap:10px;transition:.12s;}
+.btn-build:hover{transform:translateY(-2px);} .btn-build:active{transform:translateY(4px);box-shadow:0 3px 0 rgba(102,74,189,.4);}
+.btn-build:disabled{opacity:.5;cursor:not-allowed;filter:grayscale(.4);}
+
+/* ===== LEARNING VISUALS ===== */
+.learn-visuals{max-width:1120px;margin:0 auto;width:100%;padding:0 18px;}
+.lv-head{text-align:center;font-weight:700;font-size:21px;margin:6px 0 2px;}
+.lv-sub{text-align:center;color:var(--ink2);font-weight:600;font-size:14px;margin-bottom:14px;}
+.lv-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+@media(max-width:880px){.lv-grid{grid-template-columns:1fr;}}
+.viz{background:#fff;border-radius:22px;padding:18px;box-shadow:var(--sh-s);border:3px solid #fff;}
+.viz h4{font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px;margin-bottom:4px;}
+.viz .why{color:var(--ink2);font-weight:600;font-size:12.5px;margin-bottom:12px;}
+.aug-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.aug-cell{text-align:center;}
+.aug-cell canvas{width:100%;border-radius:10px;background:#eee;aspect-ratio:1;}
+.aug-cell span{font-size:11px;font-weight:700;color:var(--ink2);display:block;margin-top:3px;}
+.viz canvas.plot{width:100%;border-radius:12px;background:var(--cream);display:block;}
+.viz .legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+.viz .legend span{font-size:12px;font-weight:700;display:flex;align-items:center;gap:5px;color:var(--ink2);}
+.viz .legend i{width:11px;height:11px;border-radius:4px;display:inline-block;}
+.viz .placeholder{color:var(--ink2);font-weight:600;font-size:13px;text-align:center;padding:26px 10px;}
+.tip{background:#FFF6E8;border:2px solid #FFE0A8;border-radius:13px;padding:10px 12px;font-size:12.5px;font-weight:600;color:#8A5A00;margin-top:10px;}
+.btn-mini{border:none;cursor:pointer;background:var(--cream2);border:2px solid transparent;padding:9px 14px;border-radius:11px;font-weight:700;font-size:13.5px;color:var(--ink);margin-top:10px;}
+.btn-mini:hover{border-color:var(--orange);}
+#cluster-tip{position:absolute;z-index:50;background:#fff;border-radius:10px;box-shadow:var(--sh);padding:6px;display:none;pointer-events:none;}
+#cluster-tip img{width:54px;height:54px;border-radius:8px;display:block;object-fit:cover;}
+#cluster-tip b{font-size:11px;display:block;text-align:center;margin-top:2px;}
+
+/* ===== PLAYTIME ===== */
+.play-result{text-align:center;padding:6px 0;}
+.play-result .label{font-weight:700;font-size:33px;min-height:42px;}
+.play-result .confi{font-weight:700;color:var(--ink2);font-size:15px;}
+.confetti{display:inline-block;animation:pop2 .45s;}
+@keyframes pop2{0%{transform:scale(0)}70%{transform:scale(1.25)}100%{transform:scale(1)}}
+.bars{margin-top:14px;display:flex;flex-direction:column;gap:9px;}
+.brow{display:flex;align-items:center;gap:10px;}
+.brow .bn{font-weight:700;font-size:14px;width:96px;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.brow .bt{flex:1;height:20px;border-radius:999px;background:var(--cream2);overflow:hidden;}
+.brow .bt i{display:block;height:100%;border-radius:999px;transition:width .2s;}
+.brow .bv{font-weight:700;font-size:13px;width:42px;color:var(--ink2);}
+.play-empty{text-align:center;color:var(--ink2);font-weight:600;padding:28px 14px;}
+.play-empty .em{font-size:38px;display:block;margin-bottom:9px;}
+.closest{display:flex;gap:8px;align-items:center;margin-top:14px;flex-wrap:wrap;}
+.closest img{width:46px;height:46px;border-radius:9px;object-fit:cover;border:2px solid #fff;box-shadow:var(--sh-s);}
+.closest .lbl{font-size:12.5px;font-weight:700;color:var(--ink2);}
+
+/* game */
+.game-card{background:linear-gradient(135deg,#FFF1E6,#FFE6F0);border-radius:20px;padding:18px;border:3px solid #fff;box-shadow:var(--sh-s);margin-top:4px;}
+.game-card h4{font-size:17px;font-weight:700;margin-bottom:6px;}
+.game-task{font-size:24px;font-weight:800;color:var(--orange);min-height:32px;}
+.game-score{font-weight:700;color:var(--grape-d);font-size:15px;margin-top:4px;}
+.game-row{display:flex;gap:10px;margin-top:12px;}
+.btn-game{flex:1;border:none;cursor:pointer;padding:12px;border-radius:13px;font-weight:700;font-size:15px;color:#fff;background:linear-gradient(180deg,var(--sun),#E89F12);box-shadow:0 4px 0 rgba(200,140,0,.35);}
+.btn-game:active{transform:translateY(2px);}
+
+/* ===== BUILD OVERLAY (neuron animation) ===== */
+.overlay{position:fixed;inset:0;z-index:80;background:rgba(58,46,42,.55);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:18px;}
+.build-modal{background:#fff;border-radius:28px;padding:30px 28px;max-width:440px;width:100%;text-align:center;box-shadow:var(--sh);}
+.neurons{display:grid;grid-template-columns:repeat(8,1fr);gap:7px;margin:6px auto 16px;max-width:280px;}
+.neurons i{width:100%;aspect-ratio:1;border-radius:50%;background:var(--cream2);transition:background .2s, transform .2s;}
+.neurons i.on{background:var(--sun);transform:scale(1.15);}
+.build-modal h3{font-size:23px;font-weight:700;margin:4px 0 4px;}
+.build-step{color:var(--ink2);font-weight:600;font-size:14.5px;min-height:22px;margin-bottom:16px;}
+.bar{height:18px;border-radius:999px;background:var(--cream2);overflow:hidden;box-shadow:inset 0 2px 4px rgba(0,0,0,.06);}
+.bar i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,var(--sun),var(--orange),var(--bubble));transition:width .25s;}
+.bar-pct{font-weight:700;font-size:15px;color:var(--orange);margin-top:8px;}
+
+/* footer */
+.footer{position:relative;z-index:2;margin-top:auto;background:linear-gradient(180deg,#FFEFE3,#FFE2CF);border-top:4px dashed #FFC9A8;padding:28px 20px;text-align:center;}
+.footer .frow{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-bottom:13px;}
+.fbadge{display:inline-flex;align-items:center;gap:7px;background:#fff;padding:9px 15px;border-radius:999px;font-weight:700;font-size:13px;box-shadow:var(--sh-s);}
+.footer .ftitle{font-weight:700;font-size:22px;color:var(--orange);}
+.footer .fsub{color:var(--ink2);font-weight:600;font-size:13px;}
+.footer .fmade{margin-top:11px;color:var(--ink2);font-weight:600;font-size:12px;}
+.footer a{color:var(--orange);text-decoration:none;font-weight:700;}
+
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(120px);z-index:90;background:var(--ink);color:#fff;padding:13px 22px;border-radius:14px;font-weight:700;font-size:14px;box-shadow:var(--sh);transition:transform .35s cubic-bezier(.34,1.56,.64,1);}
+.toast.show{transform:translateX(-50%) translateY(0);}
+
+/* hero extras */
+.kicker{display:inline-block;background:#fff;color:var(--orange-d);font-weight:700;font-size:13px;letter-spacing:1px;padding:8px 18px;border-radius:999px;box-shadow:var(--sh-s);margin-bottom:16px;animation:rise .5s both;}
+.brand-title{background:linear-gradient(120deg,var(--orange),var(--bubble) 60%,var(--grape));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-shadow:none;}
+.brand-title .a{-webkit-text-fill-color:transparent;}
+.rotator{margin-top:10px;font-size:clamp(18px,3vw,26px);font-weight:700;color:var(--ink);}
+.rotator #rotator-word{color:var(--orange);}
+.rotator .caret{color:var(--orange);animation:blink 1s steps(1) infinite;font-weight:400;}
+
+/* behind the scenes */
+.viz.span2{grid-column:1 / -1;}
+#bts-body{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:760px){#bts-body{grid-template-columns:1fr;}}
+.bts-step{display:flex;gap:11px;align-items:flex-start;background:var(--cream);border-radius:14px;padding:12px 13px;border:2px solid #fff;}
+.bts-step .bn{flex:none;width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;background:#fff;box-shadow:var(--sh-s);}
+.bts-step .bt b{font-size:14px;font-weight:700;display:block;}
+.bts-step .bt span{font-size:12.5px;color:var(--ink2);font-weight:600;line-height:1.4;}
+.bts-step .bt em{color:var(--orange);font-style:normal;font-weight:700;}
+</style>
+</head>
+<body>
+
+<!-- doodles -->
+<svg class="doodle" style="top:8%;left:5%;width:52px" viewBox="0 0 24 24"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z" fill="#FFC23C"/></svg>
+<svg class="doodle" style="top:13%;right:8%;width:58px;animation-delay:1.3s" viewBox="0 0 60 36"><path d="M10 26a8 8 0 010-16 11 11 0 0121-2 7 7 0 012 16z" fill="#9ED9FF"/></svg>
+<svg class="doodle" style="bottom:16%;left:7%;width:46px;animation-delay:2s" viewBox="0 0 40 40"><circle cx="20" cy="20" r="14" fill="#27CE9B"/><circle cx="20" cy="20" r="7" fill="#fff"/></svg>
+<svg class="doodle" style="top:44%;right:4%;width:38px;animation-delay:.6s" viewBox="0 0 24 24"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z" fill="#FF6FA5"/></svg>
+<svg class="doodle" style="bottom:9%;right:13%;width:68px;animation-delay:1.7s" viewBox="0 0 80 20"><path d="M2 12c8-12 14 12 22 0s14 12 22 0 14 12 22 0" stroke="#9B7BE8" stroke-width="4" fill="none" stroke-linecap="round"/></svg>
+
+<!-- ================= LANDING ================= -->
+<section id="landing">
+  <div class="kicker">🤖 YOUR VERY OWN AI LAB</div>
+  <h1 class="brand-title">AI <span class="a">Studio</span></h1>
+  <div class="rotator">Teach a machine to <span id="rotator-word">see</span><span class="caret">▕</span></div>
+  <div class="by-row">
+    <div class="by-label">B Y</div>
+    <!-- LOGO + clickable link to cognospace.in. Replace src of the PNG when ready. -->
+    <a class="logo-slot" href="https://www.cognospace.in" target="_blank" rel="noopener" title="Visit CognoSpace">
+      <img id="logo-landing" src="cognospace-logo.png" alt="CognoSpace">
+    </a>
+  </div>
+  <p class="tagline">A hands-on lab where you <span class="hl">teach a real AI</span> with pictures, poses &amp; sounds — and discover <span class="hl">exactly how it learns!</span> ✨</p>
+
+  <div class="session-card">
+    <h2>Let's set up your studio 🎒</h2>
+    <p class="sub">Tell us about your team to begin</p>
+    <div class="field" id="f-school"><label>🏫 School Name</label><input id="in-school" type="text" placeholder="e.g. Sunrise Public School" autocomplete="off"></div>
+    <div class="row2">
+      <div class="field" id="f-class"><label>📚 Class</label><input id="in-class" type="text" placeholder="e.g. 8" autocomplete="off"></div>
+      <div class="field" id="f-section"><label>🅰️ Section</label><input id="in-section" type="text" placeholder="e.g. B" autocomplete="off"></div>
+    </div>
+    <div class="field" id="f-table"><label>🪄 Table / Team Name</label><input id="in-table" type="text" placeholder="e.g. The Robo Stars" autocomplete="off"></div>
+    <button class="btn-primary" id="btn-start">🚀 Start a Session</button>
+  </div>
+</section>
+
+<!-- ================= APP ================= -->
+<div id="app" class="hidden">
+  <nav class="navbar">
+    <!-- clickable CognoSpace logo -> cognospace.in -->
+    <a class="nav-logo" href="https://www.cognospace.in" target="_blank" rel="noopener" title="Visit CognoSpace">
+      <img id="logo-nav" src="cognospace-logo.png" alt="CognoSpace">
+    </a>
+    <div class="nav-spacer"></div>
+    <div class="pill" id="status-pill"><span class="dot" id="status-dot"></span><span id="status-text">Getting ready…</span></div>
+    <div class="pill">📸 Samples: <span class="n" id="trained-count">0</span></div>
+    <button class="btn-end" id="btn-end">⏻ End Session</button>
+  </nav>
+  <div class="session-strip" id="session-strip"></div>
+
+  <!-- PROJECT PICKER -->
+  <div id="picker-view">
+    <h2 class="section-title">Pick an activity to teach your AI 🎓</h2>
+    <p class="section-sub">Each one teaches the AI in a different way — choose one to start collecting examples and building!</p>
+    <div class="picker">
+      <div class="pcard image" data-type="image"><span class="ribbon"></span><span class="emoji">📷</span><h3>Teach with Pictures</h3><p>Show objects, drawings or faces and let the AI learn to recognise them.</p></div>
+      <div class="pcard pose" data-type="pose"><span class="ribbon"></span><span class="emoji">🤸</span><h3>Teach with Poses</h3><p>Strike a pose! The AI learns your body positions using a skeleton.</p></div>
+      <div class="pcard sound" data-type="sound"><span class="ribbon"></span><span class="emoji">🔊</span><h3>Teach with Sounds</h3><p>Make sounds or say words and train the AI to listen and tell them apart.</p></div>
+    </div>
+  </div>
+
+  <!-- ACTIVITY VIEW -->
+  <div id="activity-view" class="hidden">
+    <div class="topbar">
+      <button class="btn-back" id="btn-back">← Activities</button>
+      <div class="mode-tabs">
+        <button class="mode-tab learn active" id="tab-learn">📖 Learn &amp; Build</button>
+        <button class="mode-tab play" id="tab-play">🎮 Playtime</button>
+      </div>
+    </div>
+    <p class="stage-hint" id="stage-hint"></p>
+
+    <div class="workspace">
+      <div class="grid">
+        <!-- LEFT: input (camera or mic) -->
+        <div class="panel">
+          <h3><span class="ic" id="input-ic">📷</span> <span id="input-title">Your Camera</span></h3>
+          <!-- camera (image/pose) -->
+          <div id="cam-wrap">
+            <div class="cam-box">
+              <video id="video" autoplay playsinline muted></video>
+              <canvas class="layer" id="overlay"></canvas>
+              <div class="cam-off" id="cam-off"><div class="big">📷</div><div style="font-weight:700">Camera is off</div><div style="font-size:13px;opacity:.8">Tap the button below</div></div>
+              <button class="cam-flip hidden" id="cam-flip" title="Flip camera">🔄</button>
+            </div>
+            <div class="cam-tools"><button class="btn-soft" id="btn-cam">📷 Turn on camera</button></div>
+          </div>
+          <!-- mic (sound) -->
+          <div id="mic-wrap" class="hidden">
+            <div class="mic-box"><canvas id="mic-canvas"></canvas><div class="mic-off" id="mic-off"><div class="big">🎤</div><div style="font-weight:700">Microphone is off</div></div></div>
+            <div class="cam-tools"><button class="btn-soft" id="btn-mic">🎤 Turn on microphone</button></div>
+          </div>
+        </div>
+
+        <!-- RIGHT: learn panel -->
+        <div class="panel" id="learn-panel">
+          <h3><span class="ic" style="background:var(--grape)">🧠</span> Teach Your AI</h3>
+          <div class="add-class">
+            <input id="in-newclass" type="text" placeholder="New category…" autocomplete="off">
+            <button class="btn-add" id="btn-addclass">+ Add</button>
+          </div>
+          <div id="classes-list"></div>
+          <button class="btn-build" id="btn-build" disabled>⚡ Build my AI brain!</button>
+        </div>
+
+        <!-- RIGHT: play panel -->
+        <div class="panel hidden" id="play-panel">
+          <h3><span class="ic" style="background:var(--mint)">🔮</span> AI is Guessing!</h3>
+          <div class="play-empty" id="play-empty"><span class="em">🎓</span>Your AI hasn't learned anything yet!<br>Go to <b>Learn &amp; Build</b> first.</div>
+          <div class="hidden" id="play-live">
+            <div class="play-result"><div class="label" id="play-label">…</div><div class="confi" id="play-confi">show me something!</div></div>
+            <div class="bars" id="play-bars"></div>
+            <div class="closest hidden" id="closest-wrap"><span class="lbl">Most like what I learned:</span><span id="closest-imgs"></span></div>
+            <button class="btn-mini hidden" id="btn-saliency">🔍 What did the AI look at?</button>
+            <div class="game-card" id="game-card">
+              <h4>🎯 Playtime Challenge</h4>
+              <div class="game-task" id="game-task">Press Start!</div>
+              <div class="game-score" id="game-score">Score: 0</div>
+              <div class="game-row"><button class="btn-game" id="btn-game">▶ Start challenge</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LEARNING VISUALS -->
+    <div class="learn-visuals" id="learn-visuals">
+      <h3 class="lv-head">🔬 See how your AI is learning</h3>
+      <p class="lv-sub">These pictures show what's happening inside the AI brain — not magic, just patterns!</p>
+      <div class="lv-grid">
+        <!-- Augmentation (image only) -->
+        <div class="viz" id="viz-aug">
+          <h4>📐 More data from one snap</h4>
+          <p class="why">Each photo you take becomes 4 versions (flip, brighter, darker). More examples = a smarter, fairer AI.</p>
+          <div class="aug-grid" id="aug-grid">
+            <div class="aug-cell"><canvas width="120" height="120"></canvas><span>original</span></div>
+            <div class="aug-cell"><canvas width="120" height="120"></canvas><span>flipped</span></div>
+            <div class="aug-cell"><canvas width="120" height="120"></canvas><span>brighter</span></div>
+            <div class="aug-cell"><canvas width="120" height="120"></canvas><span>darker</span></div>
+          </div>
+          <div class="placeholder" id="aug-ph">Snap a picture in a category to see this ✨</div>
+        </div>
+
+        <!-- Feature map cluster (image + pose) -->
+        <div class="viz" id="viz-cluster" style="position:relative">
+          <h4>🗺️ The AI's memory map</h4>
+          <p class="why">Every example becomes a dot. The AI groups similar things together. If your dots make tidy colour clumps, it learned well!</p>
+          <canvas class="plot" id="cluster-canvas" width="520" height="300"></canvas>
+          <div class="legend" id="cluster-legend"></div>
+          <div class="placeholder" id="cluster-ph">Build your AI to see its memory map 🗺️</div>
+          <div id="cluster-tip"><img id="cluster-tip-img"><b id="cluster-tip-lbl"></b></div>
+        </div>
+
+        <!-- Accuracy curve (sound) -->
+        <div class="viz hidden" id="viz-acc">
+          <h4>📈 Learning curve</h4>
+          <p class="why">While training, the AI practises over and over. Watch its score climb as it gets better — just like you practising!</p>
+          <canvas class="plot" id="acc-canvas" width="520" height="280"></canvas>
+          <div class="placeholder" id="acc-ph">Build your sound AI to see its learning curve 📈</div>
+        </div>
+
+        <!-- Saliency (image) -->
+        <div class="viz hidden" id="viz-saliency">
+          <h4>🔥 Where the AI looked</h4>
+          <p class="why">Red = important to the AI's guess. Blue = ignored. Try it in Playtime to see what caught its attention!</p>
+          <div style="display:flex;gap:10px;align-items:center;justify-content:center"><canvas id="sal-canvas" width="220" height="220" style="border-radius:12px;background:#eee;max-width:48%"></canvas></div>
+          <div class="placeholder" id="sal-ph">In Playtime, tap “What did the AI look at?”</div>
+        </div>
+
+        <!-- Behind the scenes explainer (all modes) -->
+        <div class="viz span2" id="viz-bts">
+          <h4>🔧 Behind the scenes — how I actually learned</h4>
+          <p class="why">No magic! Here's exactly what happened inside the AI when you pressed “Build”.</p>
+          <div id="bts-body"><div class="placeholder">Build your AI to reveal what happened inside its brain 🧠</div></div>
+        </div>
+      </div>
+      <div class="tip" id="lv-tip">💡 Tip: collect at least <b>2 categories</b> and aim for <b>10+ examples each</b>, with different angles and lighting. The AI learns from variety!</div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="fmade">Made with 🧡 by <a href="https://www.cognospace.in" target="_blank" rel="noopener">CognoSpace</a> · Experiential Learning · STEAM &amp; AI</div>
+  </footer>
+</div>
+
+<!-- BUILD OVERLAY -->
+<div class="overlay hidden" id="build-overlay">
+  <div class="build-modal">
+    <div class="neurons" id="neurons"></div>
+    <h3 id="build-title">Building your AI brain…</h3>
+    <div class="build-step" id="build-step">Warming up the neurons…</div>
+    <div class="bar"><i id="build-bar"></i></div>
+    <div class="bar-pct" id="build-pct">0%</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===========================================================
+   AI STUDIO by CognoSpace
+   Images (MobileNet+KNN) · Poses (PoseNet+KNN) · Sounds (Speech Commands transfer)
+   =========================================================== */
+const LS_SESSION='aistudio_session_v2', LS_DATA='aistudio_data_v3';
+const PALETTE=['#FF7A3D','#37AEE2','#27CE9B','#FFC23C','#9B7BE8','#FF6FA5','#5FD46A','#FF9F5A'];
+const K=3, AUG=['orig','flip','bright','dark'], MAX_THUMBS=8;
+
+const $=id=>document.getElementById(id);
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2300);}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+/* ---------- global state ---------- */
+let projectType=null;            // 'image' | 'pose' | 'sound'
+let mode='learn';
+
+let mobilenetNet=null, poseNet=null, handModel=null, speechBase=null;
+let imageKNN=null, poseKNN=null, soundTransfer=null;
+
+// per-type state
+const S={
+  image:{classes:[],samples:[],built:false,key:''},
+  pose:{classes:[],samples:[],built:false,key:''},
+  sound:{classes:[],built:false,history:null}
+};
+// samples item: {label, vec:[...], thumb:dataURL|null}
+
+let stream=null, facing='user', cameraOn=false, micOn=false;
+let predicting=false, rafId=null, poseRafId=null, audioCtx=null, analyser=null, micRaf=null;
+
+/* ===========================================================
+   SESSION
+   =========================================================== */
+function getSession(){try{return JSON.parse(localStorage.getItem(LS_SESSION));}catch(e){return null;}}
+function startSession(){
+  const v=id=>$(id).value.trim();
+  const s={school:v('in-school'),cls:v('in-class'),section:v('in-section'),table:v('in-table'),started:Date.now()};
+  let ok=true;
+  [['f-school',s.school],['f-class',s.cls],['f-section',s.section],['f-table',s.table]].forEach(([f,val])=>{
+    $(f).classList.toggle('err',!val); if(!val)ok=false;
+  });
+  if(!ok){toast('Please fill in all the details 😊');return;}
+  localStorage.setItem(LS_SESSION,JSON.stringify(s));
+  enterApp();
+}
+function enterApp(){
+  const s=getSession(); if(!s)return;
+  $('landing').classList.add('hidden'); $('app').classList.remove('hidden');
+  $('session-strip').innerHTML=
+    `<span class="chip">🏫 <b>${esc(s.school)}</b></span><span class="chip">📚 Class <b>${esc(s.cls)}</b></span>`+
+    `<span class="chip">🅰️ Section <b>${esc(s.section)}</b></span><span class="chip">🪄 Team <b>${esc(s.table)}</b></span>`;
+  loadData();
+  warmUp();
+}
+function endSession(){
+  if(!confirm('End the session? This erases ALL your training and details from this device.'))return;
+  localStorage.removeItem(LS_SESSION); localStorage.removeItem(LS_DATA);
+  stopCamera(); stopMic();
+  location.reload();
+}
+
+/* ===========================================================
+   MODEL LOADING (lazy, friendly status)
+   =========================================================== */
+function setStatus(ready,text){$('status-text').textContent=text;$('status-dot').classList.toggle('ready',!!ready);}
+async function warmUp(){
+  imageKNN=imageKNN||knnClassifier.create();
+  poseKNN=poseKNN||knnClassifier.create();
+  setStatus(true,'AI Studio is ready!');
+}
+async function ensureImageModel(){
+  if(!mobilenetNet){setStatus(false,'Waking up the image AI…');mobilenetNet=await mobilenet.load();setStatus(true,'Image AI ready!');}
+}
+async function ensurePoseModel(){
+  if(!poseNet){setStatus(false,'Waking up the body AI…');
+    poseNet=await posenet.load({architecture:'MobileNetV1',outputStride:16,inputResolution:{width:257,height:257},multiplier:0.75});}
+  if(!handModel){setStatus(false,'Waking up the hand AI…');
+    handModel=await handpose.load();}
+  setStatus(true,'Pose + hand AI ready!');
+}
+async function ensureSoundModel(){
+  if(!speechBase){setStatus(false,'Waking up the sound AI…');
+    speechBase=speechCommands.create('BROWSER_FFT'); await speechBase.ensureModelLoaded();
+    setStatus(true,'Sound AI ready!');}
+}
+
+/* ===========================================================
+   PROJECT PICKER
+   =========================================================== */
+document.querySelectorAll('.pcard').forEach(c=>c.onclick=()=>openActivity(c.dataset.type));
+function openActivity(type){
+  projectType=type;
+  $('picker-view').classList.add('hidden'); $('activity-view').classList.remove('hidden');
+  // input area
+  const cam=(type!=='sound');
+  $('cam-wrap').classList.toggle('hidden',!cam);
+  $('mic-wrap').classList.toggle('hidden',cam);
+  $('input-ic').style.background = type==='image'?'var(--sky)':type==='pose'?'var(--grape)':'var(--mint)';
+  $('input-ic').textContent = type==='sound'?'🎤':'📷';
+  $('input-title').textContent = type==='sound'?'Your Microphone':'Your Camera';
+  $('in-newclass').placeholder = type==='image'?'New category… e.g. Apple 🍎':type==='pose'?'New pose… e.g. Hands Up 🙌':'New sound… e.g. Clap 👏';
+  // visuals visibility
+  $('viz-aug').classList.toggle('hidden',type!=='image');
+  $('viz-saliency').classList.toggle('hidden',type!=='image');
+  $('viz-cluster').classList.toggle('hidden',type==='sound');
+  $('viz-acc').classList.toggle('hidden',type!=='sound');
+  // preload model
+  if(type==='image')ensureImageModel(); else if(type==='pose')ensurePoseModel(); else ensureSoundModel();
+  switchMode('learn'); renderClasses(); updateCount(); refreshVisuals();
+  setHint();
+}
+$('btn-back').onclick=()=>{stopAll();$('activity-view').classList.add('hidden');$('picker-view').classList.remove('hidden');projectType=null;};
+function stopAll(){stopPredict();stopMic();if(soundTransfer&&soundTransfer.isListening())soundTransfer.stopListening();}
+
+function setHint(){
+  const learn=mode==='learn';
+  const map={
+    image:['Add categories, snap pictures for each (try different angles!), then build your AI brain.','Show objects to the camera and watch the AI guess! 🎯'],
+    pose:['Add poses, strike each pose and capture it many times, then build your AI brain.','Strike a pose and watch the AI recognise it! 🤸'],
+    sound:['Add sounds, record each one several times, then build your sound AI.','Make a sound and watch the AI listen! 🔊']
+  };
+  $('stage-hint').textContent=map[projectType][learn?0:1];
+}
+
+/* ===========================================================
+   CAMERA  (image + pose)
+   =========================================================== */
+async function toggleCamera(){cameraOn?stopCamera():await startCamera();}
+async function startCamera(){
+  try{
+    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing},audio:false});
+    const v=$('video');v.srcObject=stream;await v.play();
+    cameraOn=true;$('cam-off').classList.add('hidden');$('cam-flip').classList.remove('hidden');
+    $('btn-cam').textContent='⏹ Turn off camera';$('btn-cam').classList.add('on');
+    if(projectType==='pose')startPoseLoop();
+    if(mode==='play'&&S[projectType].built&&projectType==='image')startPredict();
+  }catch(e){console.error(e);toast('Could not open the camera 📷');}
+}
+function stopCamera(){
+  stopPredict();if(poseRafId)cancelAnimationFrame(poseRafId);
+  if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}
+  cameraOn=false;$('cam-off').classList.remove('hidden');$('cam-flip').classList.add('hidden');
+  $('btn-cam').textContent='📷 Turn on camera';$('btn-cam').classList.remove('on');
+  const o=$('overlay');if(o.getContext){o.getContext('2d').clearRect(0,0,o.width,o.height);}
+}
+async function flipCamera(){facing=facing==='user'?'environment':'user';if(cameraOn){stopCamera();await startCamera();}}
+
+/* hand connections (MediaPipe 21-landmark layout) */
+const HAND_CONNECTIONS=[[0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[6,7],[7,8],[5,9],[9,10],[10,11],[11,12],[9,13],[13,14],[14,15],[15,16],[13,17],[17,18],[18,19],[19,20],[0,17]];
+
+/* ONE loop: detects body + hands, draws BOTH, and (in playtime) classifies */
+let poseBusy=false;
+async function startPoseLoop(){
+  const v=$('video'),o=$('overlay');
+  async function loop(){
+    if(!cameraOn||projectType!=='pose')return;
+    if(!poseBusy&&poseNet&&handModel&&v.videoWidth){
+      poseBusy=true;
+      try{
+        o.width=v.videoWidth;o.height=v.videoHeight;
+        const body=await poseNet.estimateSinglePose(v,{flipHorizontal:false});
+        const hands=await handModel.estimateHands(v,true);
+        drawBodyAndHands(body,hands,o);
+        if(mode==='play'&&S.pose.built&&poseKNN.getNumClasses()>0){
+          const vec=poseHandVector(body,hands,v);
+          if(vec){const act=tf.tensor(vec);const res=await poseKNN.predictClass(act,K);act.dispose();renderPrediction(res,null,vec);}
+        }
+      }catch(e){}
+      poseBusy=false;
+    }
+    poseRafId=requestAnimationFrame(loop);
+  }
+  loop();
+}
+function drawBodyAndHands(body,hands,o){
+  const ctx=o.getContext('2d');ctx.clearRect(0,0,o.width,o.height);ctx.lineCap='round';
+  // body skeleton (orange)
+  if(body){
+    const adj=posenet.getAdjacentKeyPoints(body.keypoints,0.3);
+    ctx.strokeStyle='#FF7A3D';ctx.lineWidth=Math.max(3,o.width/180);
+    adj.forEach(([a,b])=>{ctx.beginPath();ctx.moveTo(a.position.x,a.position.y);ctx.lineTo(b.position.x,b.position.y);ctx.stroke();});
+    body.keypoints.forEach(k=>{if(k.score>0.3){ctx.beginPath();ctx.fillStyle='#9B7BE8';ctx.arc(k.position.x,k.position.y,Math.max(4,o.width/120),0,7);ctx.fill();}});
+  }
+  // hands / fingers (teal lines + pink joints)
+  (hands||[]).forEach(h=>{
+    const lm=h.landmarks; // 21 × [x,y,z]
+    ctx.strokeStyle='#27CE9B';ctx.lineWidth=Math.max(2.5,o.width/240);
+    HAND_CONNECTIONS.forEach(([a,b])=>{ctx.beginPath();ctx.moveTo(lm[a][0],lm[a][1]);ctx.lineTo(lm[b][0],lm[b][1]);ctx.stroke();});
+    lm.forEach(p=>{ctx.beginPath();ctx.fillStyle='#FF6FA5';ctx.arc(p[0],p[1],Math.max(3,o.width/200),0,7);ctx.fill();});
+  });
+}
+
+/* grab a 224 square frame, optional augmentation */
+function grabFrame(aug){
+  const v=$('video'),c=document.createElement('canvas');c.width=224;c.height=224;const ctx=c.getContext('2d');
+  const vw=v.videoWidth||4,vh=v.videoHeight||3,side=Math.min(vw,vh),sx=(vw-side)/2,sy=(vh-side)/2;
+  ctx.save();if(aug==='flip'){ctx.translate(224,0);ctx.scale(-1,1);}ctx.drawImage(v,sx,sy,side,side,0,0,224,224);ctx.restore();
+  if(aug==='bright'||aug==='dark'){ctx.globalCompositeOperation=aug==='bright'?'lighter':'multiply';
+    ctx.fillStyle=aug==='bright'?'rgba(255,255,255,.18)':'rgba(140,140,140,.55)';ctx.fillRect(0,0,224,224);ctx.globalCompositeOperation='source-over';}
+  return c;
+}
+
+/* ===========================================================
+   MICROPHONE  (sound visualiser)
+   =========================================================== */
+async function toggleMic(){micOn?stopMic():await startMic();}
+async function startMic(){
+  try{
+    await ensureSoundModel();
+    const ms=await navigator.mediaDevices.getUserMedia({audio:true});
+    audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+    const src=audioCtx.createMediaStreamSource(ms);analyser=audioCtx.createAnalyser();analyser.fftSize=256;src.connect(analyser);
+    window._micStream=ms;micOn=true;$('mic-off').classList.add('hidden');
+    $('btn-mic').textContent='⏹ Turn off microphone';$('btn-mic').classList.add('on');
+    drawMic();
+  }catch(e){console.error(e);toast('Could not open the microphone 🎤');}
+}
+function stopMic(){
+  micOn=false;if(micRaf)cancelAnimationFrame(micRaf);
+  if(window._micStream){window._micStream.getTracks().forEach(t=>t.stop());window._micStream=null;}
+  if(audioCtx){audioCtx.close();audioCtx=null;}
+  $('mic-off')&&$('mic-off').classList.remove('hidden');
+  if($('btn-mic')){$('btn-mic').textContent='🎤 Turn on microphone';$('btn-mic').classList.remove('on');}
+}
+function drawMic(){
+  const c=$('mic-canvas'),ctx=c.getContext('2d');c.width=c.clientWidth;c.height=c.clientHeight;
+  const data=new Uint8Array(analyser.frequencyBinCount);
+  function loop(){
+    if(!micOn)return;analyser.getByteFrequencyData(data);
+    ctx.clearRect(0,0,c.width,c.height);const bw=c.width/data.length;
+    for(let i=0;i<data.length;i++){const h=(data[i]/255)*c.height;const hue=24+(i/data.length)*40;
+      ctx.fillStyle=`hsl(${hue},90%,60%)`;ctx.fillRect(i*bw,c.height-h,bw*0.8,h);}
+    micRaf=requestAnimationFrame(loop);
+  }loop();
+}
+
+/* ===========================================================
+   CLASSES & CAPTURE
+   =========================================================== */
+function curClasses(){return S[projectType].classes;}
+function addClass(){
+  const inp=$('in-newclass'),name=inp.value.trim();
+  if(!name){toast('Type a name first 🙂');return;}
+  const cl=curClasses();if(cl.length>=8){toast('That\'s plenty! (max 8)');return;}
+  cl.push({id:'c'+Date.now(),name,color:PALETTE[cl.length%PALETTE.length],count:0,thumbs:[]});
+  inp.value='';renderClasses();
+}
+function delClass(id){
+  const st=S[projectType];
+  st.classes=st.classes.filter(c=>c.id!==id);
+  st.samples=(st.samples||[]).filter(s=>s.label!==id);
+  st.built=false;st.key='';
+  if(projectType==='image'){rebuildKNN(imageKNN,st);}
+  if(projectType==='pose'){rebuildKNN(poseKNN,st);}
+  renderClasses();updateCount();refreshVisuals();refreshPlayState();
+}
+function rebuildKNN(knn,st){knn.clearAllClasses();st.samples.forEach(s=>{const t=tf.tensor(s.vec);knn.addExample(t,s.label);t.dispose();});}
+
+async function capture(id){
+  const st=S[projectType];const cls=st.classes.find(c=>c.id===id);if(!cls)return;
+  if(projectType==='image'){
+    if(!cameraOn)return toast('Turn on the camera first 📷');await ensureImageModel();
+    let lastFrames=[];
+    for(const a of AUG){
+      const f=grabFrame(a==='orig'?null:a);lastFrames.push(f);
+      const act=mobilenetNet.infer(f,true);const vec=Array.from(act.dataSync());act.dispose();
+      imageKNN.addExample(tf.tensor(vec),id);
+      const thumb=cls.thumbs.length<MAX_THUMBS?f.toDataURL('image/jpeg',.5):null;
+      if(thumb)cls.thumbs.push(thumb);
+      st.samples.push({label:id,vec,thumb});cls.count++;
+    }
+    showAugmentation(lastFrames);
+  }else if(projectType==='pose'){
+    if(!cameraOn)return toast('Turn on the camera first 📷');await ensurePoseModel();
+    const v=$('video');
+    const body=await poseNet.estimateSinglePose(v,{flipHorizontal:false});
+    const hands=await handModel.estimateHands(v,true);
+    const vec=poseHandVector(body,hands,v);if(!vec)return toast('Step into view so I can see you 🙂');
+    poseKNN.addExample(tf.tensor(vec),id);
+    const thumb=cls.thumbs.length<MAX_THUMBS?snapPoseThumb(v):null;if(thumb)cls.thumbs.push(thumb);
+    st.samples.push({label:id,vec,thumb});cls.count++;
+  }else if(projectType==='sound'){
+    return toast('Use the 🎙 Record button on each sound card!');
+  }
+  st.built=false;st.key='';renderClasses();updateCount();refreshPlayState();saveData();
+}
+/* 76-dim vector: 17 body keypoints (×2) + first hand's 21 landmarks (×2), zero-filled if no hand */
+function poseHandVector(body,hands,v){
+  if(!body||body.score<0.15)return null;
+  const w=v.videoWidth||1,h=v.videoHeight||1;
+  const bodyVec=body.keypoints.flatMap(k=>[k.position.x/w,k.position.y/h]); // 34
+  let handVec=new Array(42).fill(0); // 21×2
+  if(hands&&hands.length){const lm=hands[0].landmarks;handVec=lm.flatMap(p=>[p[0]/w,p[1]/h]);}
+  return bodyVec.concat(handVec); // 76
+}
+function snapPoseThumb(v){
+  const c=document.createElement('canvas');c.width=64;c.height=64;const ctx=c.getContext('2d');
+  const vw=v.videoWidth||4,vh=v.videoHeight||3,side=Math.min(vw,vh);
+  ctx.drawImage(v,(vw-side)/2,(vh-side)/2,side,side,0,0,64,64);return c.toDataURL('image/jpeg',.5);
+}
+
+/* sound: record one example (~1s) for a class */
+async function recordSound(id){
+  const st=S.sound;const cls=st.classes.find(c=>c.id===id);if(!cls)return;
+  await ensureSoundModel();
+  if(!micOn)await startMic();
+  if(!soundTransfer)soundTransfer=speechBase.createTransfer('aistudio');
+  toast('Listening… make the sound now! 🎙');
+  try{ await soundTransfer.collectExample(id); cls.count++; renderClasses(); updateCount(); saveData(); toast('Got it! ✅'); }
+  catch(e){console.error(e);toast('Try recording again 🙂');}
+}
+
+function renderClasses(){
+  const list=$('classes-list'),cl=curClasses();
+  if(cl.length===0){
+    list.innerHTML='<div class="empty-classes"><span class="em">🏷️</span>No categories yet!<br>Add at least <b>2</b> to teach your AI.</div>';
+    $('btn-build').disabled=true;return;
+  }
+  const capLabel=projectType==='sound'?'🎙 Record sound':projectType==='pose'?'🤸 Capture pose':'📸 Add picture';
+  list.innerHTML=cl.map(c=>`
+    <div class="class-card">
+      <div class="class-head"><span class="class-swatch" style="background:${c.color}"></span>
+      <span class="class-name">${esc(c.name)}</span><span class="class-count">${c.count} ${projectType==='sound'?'🎙':'📸'}</span>
+      <button class="class-del" onclick="delClass('${c.id}')">✕</button></div>
+      <div class="thumbs">${(c.thumbs||[]).map(t=>`<img src="${t}">`).join('')}</div>
+      <button class="btn-cap" style="background:${c.color}" onclick="${projectType==='sound'?'recordSound':'capture'}('${c.id}')">${capLabel}</button>
+    </div>`).join('');
+  const need=projectType==='sound'?3:1;
+  const ready=cl.length>=2&&cl.every(c=>c.count>=need);
+  $('btn-build').disabled=!ready;
+}
+function updateCount(){$('trained-count').textContent=curClasses().reduce((s,c)=>s+c.count,0);}
+
+function showAugmentation(frames){
+  $('aug-ph').classList.add('hidden');
+  const cells=$('aug-grid').querySelectorAll('canvas');
+  frames.forEach((f,i)=>{const ctx=cells[i].getContext('2d');ctx.clearRect(0,0,120,120);ctx.drawImage(f,0,0,120,120);});
+}
+
+/* ===========================================================
+   BUILD THE AI (with neuron animation + real work)
+   =========================================================== */
+/* Step-by-step narration of what's REALLY happening, per project type */
+const BUILD_STEPS={
+  image:[['👀','Looking at every picture you took'],['🔢','Turning each picture into 1024 numbers (a "fingerprint")'],['📦','Memorising all the fingerprints by category'],['🗳️','Getting ready to compare & vote'],['✅','Done — no guessing, just matching!']],
+  pose:[['👀','Finding your body points and finger joints'],['🔢','Turning each pose into 76 numbers (body + fingers)'],['📦','Memorising every pose fingerprint'],['🗳️','Getting ready to compare & vote'],['✅','Done — it remembers your poses!']],
+  sound:[['👂','Turning each sound into a frequency picture (spectrogram)'],['🧠','Building a small neural network'],['🔁','Practising over and over (epochs)'],['📉','Checking mistakes and adjusting'],['📈','Watching the score climb!']]
+};
+function neuronGrid(){const g=$('neurons');g.innerHTML='';for(let i=0;i<24;i++)g.appendChild(document.createElement('i'));}
+let neuronTimer=null;
+function neuronAnim(on){const els=$('neurons').children;if(on){neuronTimer=setInterval(()=>{for(const e of els)e.classList.toggle('on',Math.random()<0.4);},180);}else{clearInterval(neuronTimer);for(const e of els)e.classList.remove('on');}}
+
+async function buildBrain(){
+  if($('btn-build').disabled)return;
+  const steps=BUILD_STEPS[projectType];
+  neuronGrid();$('build-overlay').classList.remove('hidden');neuronAnim(true);
+  $('build-title').textContent='Building your AI brain…';
+  let pct=0;const bump=async(target)=>{while(pct<target){pct++;$('build-bar').style.width=pct+'%';$('build-pct').textContent=pct+'%';await sleep(12);}};
+  const showStep=i=>{$('build-step').innerHTML=`<b style="font-size:18px">${steps[i][0]}</b> ${steps[i][1]}`;};
+
+  if(projectType==='sound'){
+    // real training of transfer model with accuracy curve
+    try{
+      const accPts=[];
+      showStep(0);await bump(15);
+      showStep(1);await bump(22);showStep(2);
+      await soundTransfer.train({epochs:40,callback:{onEpochEnd:async(epoch,logs)=>{
+        accPts.push(logs.acc!=null?logs.acc:(logs.accuracy||0));
+        drawAccuracy(accPts);showStep(epoch%2?3:4);
+        const tgt=22+Math.round((epoch+1)/40*70);await bump(Math.min(tgt,92));
+      }}});
+      S.sound.history=accPts;S.sound.built=true;
+      await bump(100);
+    }catch(e){console.error(e);neuronAnim(false);$('build-overlay').classList.add('hidden');return toast('Need a few more recordings per sound 🙂');}
+  }else{
+    for(let i=0;i<steps.length;i++){showStep(i);await bump(Math.round((i+1)/steps.length*100));await sleep(430);}
+    S[projectType].built=true;S[projectType].key=curClasses().map(c=>c.id+':'+c.count).join('|');
+    drawCluster();
+  }
+  neuronAnim(false);
+  $('build-title').textContent='Your AI is ready! 🎉';$('build-step').innerHTML='Switch to <b>Playtime</b> and try it out!';
+  fillBehindScenes();
+  saveData();await sleep(1100);$('build-overlay').classList.add('hidden');
+  refreshVisuals();refreshPlayState();toast('🎉 AI brain built! Go to Playtime!');switchMode('play');
+}
+
+/* Behind-the-scenes recap with the student's REAL numbers */
+function fillBehindScenes(){
+  const cl=curClasses(),total=cl.reduce((s,c)=>s+c.count,0),body=$('bts-body');
+  const step=(ic,t,d)=>`<div class="bts-step"><div class="bn">${ic}</div><div class="bt"><b>${t}</b><span>${d}</span></div></div>`;
+  if(projectType==='image'){
+    body.innerHTML=
+      step('🔢','Pictures → numbers',`Each photo was passed through a ready-made vision network (MobileNet) that turned it into a list of <em>1024 numbers</em> describing shapes, colours & textures.`)+
+      step('📦','It memorised your examples',`All <em>${total} examples</em> across <em>${cl.length} categories</em> were stored as number-lists. Nothing was sent to the internet.`)+
+      step('🗳️','How it guesses (KNN)',`For a new picture it finds the <em>3 closest</em> stored examples and they <em>vote</em>. The category with most votes wins.`)+
+      step('⚖️','Why your data matters',`It only knows what you showed it. More examples and more variety = fairer, smarter guesses.`);
+  }else if(projectType==='pose'){
+    body.innerHTML=
+      step('🦴','Body + fingers → points',`A body network (PoseNet) found <em>17 body joints</em> and a hand network (Handpose) found <em>21 finger points</em> per hand.`)+
+      step('🔢','Pose → numbers',`Each pose became <em>76 numbers</em> (body + fingers). Your <em>${total} captures</em> across <em>${cl.length} poses</em> are stored as number-lists.`)+
+      step('🗳️','How it guesses (KNN)',`A new pose is compared to the <em>3 closest</em> stored poses, which vote for the answer.`)+
+      step('🤟','Fingers count too',`Because finger points are included, gestures like ✌️ or 👍 can change the AI's answer.`);
+  }else{
+    const acc=S.sound.history&&S.sound.history.length?Math.round(S.sound.history[S.sound.history.length-1]*100):'—';
+    body.innerHTML=
+      step('🎵','Sound → spectrogram',`Each ~1-second clip became a <em>picture of its frequencies</em> (a spectrogram) — high notes on top, low notes below.`)+
+      step('🧠','A real neural network',`Unlike pictures & poses, here a small <em>neural network</em> was trained — it has adjustable "knobs" (weights).`)+
+      step('🔁','Practice = epochs',`It practised <em>40 times</em> (epochs). Each round it checked its mistakes and nudged the knobs to do better.`)+
+      step('📈','Final practice score',`Its training score reached about <em>${acc}%</em>. Watch the learning curve above to see it climb!`);
+  }
+}
+
+/* ===========================================================
+   LEARNING VISUALS
+   =========================================================== */
+function refreshVisuals(){
+  const st=S[projectType];
+  if(projectType==='sound'){
+    $('acc-ph').classList.toggle('hidden',!!(st.history&&st.history.length));
+    if(st.history)drawAccuracy(st.history);
+  }else{
+    const has=st.built&&st.samples.length;
+    $('cluster-ph').classList.toggle('hidden',!!has);
+    if(has)drawCluster(); else clearCanvas('cluster-canvas');
+  }
+  $('sal-ph').classList.toggle('hidden',false);
+  // behind-the-scenes
+  if(st.built)fillBehindScenes();
+  else $('bts-body').innerHTML='<div class="placeholder">Build your AI to reveal what happened inside its brain 🧠</div>';
+}
+function clearCanvas(id){const c=$(id);c.getContext('2d').clearRect(0,0,c.width,c.height);}
+
+/* PCA -> 2D via power iteration (no heavy deps) */
+function pca2D(vectors){
+  const n=vectors.length,d=vectors[0].length,mean=new Float64Array(d);
+  vectors.forEach(v=>{for(let i=0;i<d;i++)mean[i]+=v[i];});for(let i=0;i<d;i++)mean[i]/=n;
+  const Xc=vectors.map(v=>{const r=new Float64Array(d);for(let i=0;i<d;i++)r[i]=v[i]-mean[i];return r;});
+  const mulXc=vec=>{const o=new Float64Array(n);for(let i=0;i<n;i++){let s=0,row=Xc[i];for(let j=0;j<d;j++)s+=row[j]*vec[j];o[i]=s;}return o;};
+  const mulXcT=vec=>{const o=new Float64Array(d);for(let i=0;i<n;i++){const row=Xc[i],c=vec[i];for(let j=0;j<d;j++)o[j]+=row[j]*c;}return o;};
+  const C=v=>mulXcT(mulXc(v));
+  const norm=v=>{let s=0;for(const x of v)s+=x*x;return Math.sqrt(s)||1;};
+  const power=def=>{let v=new Float64Array(d);for(let i=0;i<d;i++)v[i]=Math.random()-.5;let nv=norm(v);for(let i=0;i<d;i++)v[i]/=nv;
+    for(let it=0;it<25;it++){let cv=C(v);if(def){let dot=0;for(let j=0;j<d;j++)dot+=cv[j]*def[j];for(let j=0;j<d;j++)cv[j]-=dot*def[j];}let nn=norm(cv);for(let j=0;j<d;j++)cv[j]/=nn;v=cv;}return v;};
+  const e1=power(null),e2=power(e1);
+  return Xc.map(r=>{let a=0,b=0;for(let j=0;j<d;j++){a+=r[j]*e1[j];b+=r[j]*e2[j];}return[a,b];});
+}
+let clusterPoints=[]; // {x,y,color,label,thumb}
+function drawCluster(){
+  const st=S[projectType];if(!st.samples||st.samples.length<2)return;
+  const vecs=st.samples.map(s=>s.vec);
+  let pts;try{pts=pca2D(vecs);}catch(e){return;}
+  const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]);
+  const minx=Math.min(...xs),maxx=Math.max(...xs),miny=Math.min(...ys),maxy=Math.max(...ys);
+  const c=$('cluster-canvas'),ctx=c.getContext('2d');const W=c.width,H=c.height,pad=26;
+  ctx.clearRect(0,0,W,H);
+  const sx=x=>pad+((x-minx)/((maxx-minx)||1))*(W-2*pad);
+  const sy=y=>pad+((y-miny)/((maxy-miny)||1))*(H-2*pad);
+  clusterPoints=[];
+  st.samples.forEach((s,i)=>{
+    const cls=st.classes.find(cc=>cc.id===s.label);const col=cls?cls.color:'#888';
+    const x=sx(pts[i][0]),y=sy(pts[i][1]);
+    ctx.beginPath();ctx.fillStyle=col;ctx.globalAlpha=.85;ctx.arc(x,y,6,0,7);ctx.fill();
+    ctx.globalAlpha=1;ctx.lineWidth=1.5;ctx.strokeStyle='#fff';ctx.stroke();
+    clusterPoints.push({x,y,color:col,label:cls?cls.name:'?',thumb:s.thumb});
+  });
+  $('cluster-legend').innerHTML=st.classes.map(c=>`<span><i style="background:${c.color}"></i>${esc(c.name)}</span>`).join('');
+}
+/* hover tooltip on cluster */
+(function(){
+  const c=$('cluster-canvas');if(!c)return;
+  c.addEventListener('mousemove',e=>{
+    const r=c.getBoundingClientRect();const mx=(e.clientX-r.left)*(c.width/r.width),my=(e.clientY-r.top)*(c.height/r.height);
+    let best=null,bd=400;clusterPoints.forEach(p=>{const dd=(p.x-mx)**2+(p.y-my)**2;if(dd<bd){bd=dd;best=p;}});
+    const tip=$('cluster-tip');
+    if(best){tip.style.display='block';tip.style.left=(e.clientX-r.left+12)+'px';tip.style.top=(e.clientY-r.top+12)+'px';
+      $('cluster-tip-lbl').textContent=best.label;const im=$('cluster-tip-img');if(best.thumb){im.src=best.thumb;im.style.display='block';}else im.style.display='none';}
+    else tip.style.display='none';
+  });
+  c.addEventListener('mouseleave',()=>{$('cluster-tip').style.display='none';});
+})();
+
+function drawAccuracy(pts){
+  if(!pts||!pts.length)return;$('acc-ph').classList.add('hidden');
+  const c=$('acc-canvas'),ctx=c.getContext('2d'),W=c.width,H=c.height,pad=34;ctx.clearRect(0,0,W,H);
+  ctx.strokeStyle='#E9D9C8';ctx.lineWidth=1;
+  for(let g=0;g<=4;g++){const y=pad+(H-2*pad)*g/4;ctx.beginPath();ctx.moveTo(pad,y);ctx.lineTo(W-pad,y);ctx.stroke();
+    ctx.fillStyle='#A99';ctx.font='11px Poppins';ctx.fillText(`${100-g*25}%`,4,y+4);}
+  const sx=i=>pad+(W-2*pad)*(pts.length<=1?0:i/(pts.length-1));const sy=v=>pad+(H-2*pad)*(1-Math.max(0,Math.min(1,v)));
+  ctx.beginPath();ctx.strokeStyle='#FF7A3D';ctx.lineWidth=3.5;ctx.lineJoin='round';
+  pts.forEach((v,i)=>{const x=sx(i),y=sy(v);i?ctx.lineTo(x,y):ctx.moveTo(x,y);});ctx.stroke();
+  pts.forEach((v,i)=>{ctx.beginPath();ctx.fillStyle='#9B7BE8';ctx.arc(sx(i),sy(v),3.5,0,7);ctx.fill();});
+  ctx.fillStyle='#7C6B62';ctx.font='12px Poppins';ctx.fillText('practice rounds (epochs) →',pad,H-8);
+}
+
+/* occlusion saliency (image only) */
+async function runSaliency(){
+  if(projectType!=='image'||!cameraOn||!S.image.built)return;
+  toast('Looking closely… 🔍');
+  const base=grabFrame(null);
+  const bAct=mobilenetNet.infer(base,true);const bRes=await imageKNN.predictClass(bAct,K);bAct.dispose();
+  const winner=bRes.label,bConf=bRes.confidences[winner]||0;const grid=6,cell=224/grid,heat=[];
+  for(let gy=0;gy<grid;gy++)for(let gx=0;gx<grid;gx++){
+    const cc=document.createElement('canvas');cc.width=224;cc.height=224;const cx=cc.getContext('2d');
+    cx.drawImage(base,0,0);cx.fillStyle='rgba(128,128,128,1)';cx.fillRect(gx*cell,gy*cell,cell,cell);
+    const a=mobilenetNet.infer(cc,true);const r=await imageKNN.predictClass(a,K);a.dispose();
+    heat.push(Math.max(0,bConf-(r.confidences[winner]||0)));
+  }
+  const max=Math.max(...heat,0.001);
+  const sc=$('sal-canvas'),sx=sc.getContext('2d');sc.width=220;sc.height=220;sx.drawImage(base,0,0,220,220);
+  let k=0;for(let gy=0;gy<grid;gy++)for(let gx=0;gx<grid;gx++){const t=heat[k++]/max;
+    sx.fillStyle=`rgba(${Math.round(60+195*t)},${Math.round(120*(1-t))},${Math.round(220*(1-t))},${0.15+0.45*t})`;
+    sx.fillRect(gx*(220/grid),gy*(220/grid),220/grid,220/grid);}
+  $('sal-ph').classList.add('hidden');toast('Red = what mattered most! 🔥');
+}
+
+/* ===========================================================
+   PLAYTIME — prediction + games
+   =========================================================== */
+function refreshPlayState(){
+  const st=S[projectType],can=st.built&&curClasses().length>=2;
+  $('play-empty').classList.toggle('hidden',can);$('play-live').classList.toggle('hidden',!can);
+  $('btn-saliency').classList.toggle('hidden',projectType!=='image');
+  $('closest-wrap').classList.toggle('hidden',projectType==='sound');
+  if(mode==='play'){
+    if(!can){stopPredict();return;}
+    if(projectType==='sound')startSoundListen();
+    else if(projectType==='image'&&cameraOn)startPredict();
+    // pose prediction runs inside the unified poseLoop (started with the camera)
+  }
+}
+function startPredict(){if(predicting||!cameraOn)return;predicting=true;predictLoop();}
+function stopPredict(){predicting=false;if(rafId)cancelAnimationFrame(rafId);if(soundTransfer&&soundTransfer.isListening())soundTransfer.stopListening();}
+
+async function predictLoop(){
+  if(!predicting)return;
+  try{
+    if(projectType==='image'&&imageKNN.getNumClasses()>0&&cameraOn){
+      const f=grabFrame(null);const act=mobilenetNet.infer(f,true);
+      const res=await imageKNN.predictClass(act,K);act.dispose();renderPrediction(res,f);
+    }
+  }catch(e){}
+  rafId=requestAnimationFrame(()=>setTimeout(predictLoop,170));
+}
+let lastWinner=null;
+function renderPrediction(res,frame,vec){
+  const st=S[projectType];const win=st.classes.find(c=>c.id===res.label);
+  const conf=Math.round((res.confidences[res.label]||0)*100);
+  lastWinner=win?win.name:null;
+  $('play-label').innerHTML=win?`<span class="confetti">🎯</span> ${esc(win.name)}`:'…';
+  $('play-confi').textContent=win?`I'm ${conf}% sure!`:'show me something!';
+  $('play-bars').innerHTML=st.classes.map(c=>{const v=Math.round((res.confidences[c.id]||0)*100);
+    return `<div class="brow"><span class="bn">${esc(c.name)}</span><span class="bt"><i style="width:${v}%;background:${c.color}"></i></span><span class="bv">${v}%</span></div>`;}).join('');
+  // closest examples (image/pose)
+  if(win&&(projectType==='image'||projectType==='pose')){
+    let probe=vec;
+    if(!probe&&frame){const t=mobilenetNet.infer(frame,true);probe=Array.from(t.dataSync());t.dispose();}
+    if(probe)showClosest(probe);
+  }
+  if(window._game&&window._game.active)checkGame(win?win.id:null,conf);
+}
+function showClosest(probe){
+  const st=S[projectType];const withThumb=st.samples.filter(s=>s.thumb);
+  if(!withThumb.length){$('closest-imgs').innerHTML='';return;}
+  const dist=s=>{let d=0;for(let i=0;i<probe.length;i++){const x=probe[i]-s.vec[i];d+=x*x;}return d;};
+  const top=withThumb.map(s=>({s,d:dist(s)})).sort((a,b)=>a.d-b.d).slice(0,3);
+  $('closest-imgs').innerHTML=top.map(t=>`<img src="${t.s.thumb}" title="${esc((st.classes.find(c=>c.id===t.s.label)||{}).name||'')}">`).join('');
+}
+
+/* sound listen */
+function startSoundListen(){
+  if(!soundTransfer||soundTransfer.isListening())return;
+  const labels=soundTransfer.wordLabels();
+  soundTransfer.listen(result=>{
+    const st=S.sound;
+    const scores=Array.from(result.scores);
+    let best=-1,bi=0;scores.forEach((v,i)=>{if(v>best){best=v;bi=i;}});
+    const lab=labels[bi];const cls=st.classes.find(c=>c.id===lab);
+    $('play-label').innerHTML=cls?`<span class="confetti">🎯</span> ${esc(cls.name)}`:'… (background)';
+    $('play-confi').textContent=cls?`I'm ${Math.round(best*100)}% sure!`:'listening…';
+    $('play-bars').innerHTML=st.classes.map(c=>{const idx=labels.indexOf(c.id);const v=idx>=0?Math.round(scores[idx]*100):0;
+      return `<div class="brow"><span class="bn">${esc(c.name)}</span><span class="bt"><i style="width:${v}%;background:${c.color}"></i></span><span class="bv">${v}%</span></div>`;}).join('');
+    if(window._game&&window._game.active&&cls)checkGame(cls.id,Math.round(best*100));
+  },{probabilityThreshold:0.6,overlapFactor:0.5}).catch(e=>console.error(e));
+}
+
+/* ----- Playtime mini-game: "Show me…" ----- */
+window._game={active:false,target:null,score:0};
+function startGame(){
+  const cl=curClasses();if(cl.length<2)return;
+  window._game={active:true,target:null,score:0};$('game-score').textContent='Score: 0';
+  nextGameTask();$('btn-game').textContent='⏹ Stop';
+}
+function stopGame(){window._game.active=false;$('game-task').textContent='Nice playing! 🎉';$('btn-game').textContent='▶ Start challenge';}
+function nextGameTask(){
+  const cl=curClasses();const t=cl[Math.floor(Math.random()*cl.length)];window._game.target=t.id;
+  const verb=projectType==='sound'?'Make the sound':projectType==='pose'?'Strike the pose':'Show me';
+  $('game-task').textContent=`${verb}: ${t.name}!`;window._game.cooldown=Date.now()+1200;
+}
+function checkGame(predId,conf){
+  const g=window._game;if(!g.active||!g.target||Date.now()<g.cooldown)return;
+  if(predId===g.target&&conf>=60){g.score++;$('game-score').textContent='Score: '+g.score;toast('✅ Correct! +1');g.target=null;setTimeout(()=>{if(g.active)nextGameTask();},700);}
+}
+$('btn-game').onclick=()=>{window._game.active?stopGame():startGame();};
+
+/* ===========================================================
+   MODE SWITCH
+   =========================================================== */
+function switchMode(m){
+  mode=m;const learn=m==='learn';
+  $('tab-learn').classList.toggle('active',learn);$('tab-play').classList.toggle('active',!learn);
+  $('learn-panel').classList.toggle('hidden',!learn);$('play-panel').classList.toggle('hidden',learn);
+  setHint();
+  if(learn){stopPredict();if(window._game)window._game.active=false;$('btn-game').textContent='▶ Start challenge';}
+  else refreshPlayState();
+}
+
+/* ===========================================================
+   SAVE / LOAD (best-effort; session always persists)
+   =========================================================== */
+function saveData(){
+  try{
+    const pack={};
+    ['image','pose'].forEach(t=>{const st=S[t];
+      pack[t]={classes:st.classes,samples:st.samples,built:st.built,key:st.key};});
+    pack.sound={classes:S.sound.classes,built:false,history:S.sound.history}; // sound model not serialised
+    localStorage.setItem(LS_DATA,JSON.stringify(pack));
+  }catch(e){console.warn('Save skipped (storage full).',e);}
+}
+function loadData(){
+  const raw=localStorage.getItem(LS_DATA);if(!raw)return;
+  try{const pack=JSON.parse(raw);
+    ['image','pose','sound'].forEach(t=>{if(pack[t]){S[t].classes=pack[t].classes||[];S[t].samples=pack[t].samples||[];S[t].built=!!pack[t].built;S[t].key=pack[t].key||'';S[t].history=pack[t].history||null;}});
+    // rebuild KNNs from samples
+    imageKNN=imageKNN||knnClassifier.create();poseKNN=poseKNN||knnClassifier.create();
+    rebuildKNN(imageKNN,S.image);rebuildKNN(poseKNN,S.pose);
+  }catch(e){console.warn('Load failed',e);}
+}
+
+/* ===========================================================
+   WIRE UP
+   =========================================================== */
+$('btn-start').onclick=startSession;
+['in-school','in-class','in-section','in-table'].forEach(id=>$(id).addEventListener('keydown',e=>{if(e.key==='Enter')startSession();}));
+$('btn-end').onclick=endSession;
+$('btn-cam').onclick=toggleCamera;$('cam-flip').onclick=flipCamera;$('btn-mic').onclick=toggleMic;
+$('btn-addclass').onclick=addClass;$('in-newclass').addEventListener('keydown',e=>{if(e.key==='Enter')addClass();});
+$('btn-build').onclick=buildBrain;
+$('tab-learn').onclick=()=>switchMode('learn');$('tab-play').onclick=()=>switchMode('play');
+$('btn-saliency').onclick=runSaliency;
+window.delClass=delClass;window.capture=capture;window.recordSound=recordSound;
+
+/* rotating hero word */
+(function(){
+  const words=['see 📷','strike a pose 🤸','hear sounds 🔊','think for itself 🧠'];
+  let i=0;const el=$('rotator-word');if(!el)return;
+  setInterval(()=>{i=(i+1)%words.length;el.style.opacity=0;setTimeout(()=>{el.textContent=words[i];el.style.opacity=1;},220);},2000);
+  el.style.transition='opacity .25s';el.textContent=words[0];
+})();
+
+if(getSession())enterApp();
+</script>
+</body>
+</html>
