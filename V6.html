@@ -178,19 +178,6 @@ button{font-family:inherit;}
 .aug-cell{text-align:center;}
 .aug-cell canvas{width:100%;border-radius:10px;background:#eee;aspect-ratio:1;}
 .aug-cell span{font-size:11px;font-weight:700;color:var(--ink2);display:block;margin-top:3px;}
-/* augmentation lab */
-.aug-lab{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--cream);border-radius:14px;padding:12px;}
-.aug-base-cell canvas{width:84px;height:84px;border-radius:10px;border:2.5px solid #fff;box-shadow:var(--sh-s);}
-.aug-base-cell span{font-size:11px;font-weight:700;color:var(--ink2);display:block;margin-top:4px;text-align:center;}
-.aug-arrow{font-size:22px;color:var(--orange);font-weight:800;}
-.aug-actions{display:flex;flex-direction:column;gap:7px;flex:1;min-width:150px;}
-.aug-act{border:2.5px solid var(--line);background:#fff;border-radius:11px;padding:9px 12px;font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;text-align:left;transition:.12s;color:var(--ink);}
-.aug-act:hover:not(:disabled){border-color:var(--orange);transform:translateX(2px);}
-.aug-act:disabled{opacity:.45;cursor:default;}
-.aug-act.done{background:#E9FAF3;border-color:#A8EDD0;color:#1A6643;opacity:1;}
-.aug-made{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
-.aug-made .aug-cell canvas{width:70px;height:70px;border:2px solid #fff;box-shadow:var(--sh-s);}
-.aug-made .aug-cell span{color:#1A6643;}
 .viz canvas.plot{width:100%;border-radius:12px;background:var(--cream);display:block;}
 .viz .legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
 .viz .legend span{font-size:12px;font-weight:700;display:flex;align-items:center;gap:5px;color:var(--ink2);}
@@ -224,32 +211,11 @@ button{font-family:inherit;}
 /* game */
 .game-card{background:linear-gradient(135deg,#FFF1E6,#FFE6F0);border-radius:20px;padding:18px;border:3px solid #fff;box-shadow:var(--sh-s);margin-top:4px;}
 .game-card h4{font-size:17px;font-weight:700;margin-bottom:6px;}
-.game-hint{font-size:12.5px;font-weight:600;color:var(--ink2);margin-bottom:12px;}
-.game-menu{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
-@media(max-width:520px){.game-menu{grid-template-columns:1fr;}}
-.game-btn{border:2.5px solid #fff;background:#fff;border-radius:14px;padding:11px 13px;cursor:pointer;text-align:left;font-family:inherit;box-shadow:var(--sh-s);transition:.12s;display:flex;flex-direction:column;gap:2px;}
-.game-btn:hover{transform:translateY(-2px);border-color:var(--orange);}
-.game-btn b{font-size:14.5px;font-weight:700;color:var(--ink);}
-.game-btn span{font-size:11.5px;font-weight:600;color:var(--ink2);line-height:1.3;}
-.game-stage{}
-.gs-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
-.gs-head b{font-size:16px;font-weight:800;color:var(--grape-d);}
-.gs-exit{border:none;background:#fff;border-radius:9px;padding:5px 10px;font-family:inherit;font-weight:700;font-size:12px;color:var(--ink2);cursor:pointer;box-shadow:var(--sh-s);}
-.gs-exit:hover{color:#EE3355;}
-.game-task{font-size:22px;font-weight:800;color:var(--orange);min-height:30px;line-height:1.25;}
+.game-task{font-size:24px;font-weight:800;color:var(--orange);min-height:32px;}
 .game-score{font-weight:700;color:var(--grape-d);font-size:15px;margin-top:4px;}
 .game-row{display:flex;gap:10px;margin-top:12px;}
 .btn-game{flex:1;border:none;cursor:pointer;padding:12px;border-radius:13px;font-weight:700;font-size:15px;color:#fff;background:linear-gradient(180deg,var(--sun),#E89F12);box-shadow:0 4px 0 rgba(200,140,0,.35);}
 .btn-game:active{transform:translateY(2px);}
-
-/* game camera overlay */
-.game-overlay{position:absolute;inset:0;z-index:8;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(20,12,8,.32);backdrop-filter:blur(2px);border-radius:inherit;text-align:center;padding:12px;}
-.go-big{font-size:54px;font-weight:800;color:#fff;text-shadow:0 3px 14px rgba(0,0,0,.55);line-height:1.05;animation:gopop .25s cubic-bezier(.34,1.56,.64,1);}
-.go-big.win{color:#7CF0B0;} .go-big.lose{color:#FF9BA8;}
-.go-sub{font-size:18px;font-weight:700;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.6);margin-top:6px;}
-@keyframes gopop{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
-.game-timer{position:absolute;top:0;left:0;right:0;height:7px;z-index:9;background:rgba(0,0,0,.25);border-radius:inherit;border-bottom-left-radius:0;border-bottom-right-radius:0;overflow:hidden;}
-.game-timer i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#27CE9B,#FFC23C,#FF6B6B);transition:width .12s linear;}
 
 /* ===== BUILD OVERLAY (neuron animation) ===== */
 .overlay{position:fixed;inset:0;z-index:80;background:rgba(58,46,42,.55);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:18px;}
@@ -357,7 +323,14 @@ button{font-family:inherit;}
 .rotator{margin-top:10px;font-size:clamp(18px,3vw,26px);font-weight:700;color:var(--ink);}
 .rotator #rotator-word{color:var(--orange);}
 .rotator .caret{color:var(--orange);animation:blink 1s steps(1) infinite;font-weight:400;}
-
+.viz.span2{grid-column:1 / -1;}
+#bts-body{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:760px){#bts-body{grid-template-columns:1fr;}}
+.bts-step{display:flex;gap:11px;align-items:flex-start;background:var(--cream);border-radius:14px;padding:12px 13px;border:2px solid #fff;}
+.bts-step .bn{flex:none;width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;background:#fff;box-shadow:var(--sh-s);}
+.bts-step .bt b{font-size:14px;font-weight:700;display:block;}
+.bts-step .bt span{font-size:12.5px;color:var(--ink2);font-weight:600;line-height:1.4;}
+.bts-step .bt em{color:var(--orange);font-style:normal;font-weight:700;}
 </style>
 </head>
 <body>
@@ -453,9 +426,6 @@ button{font-family:inherit;}
                 <div class="fl-row"><span class="fl-dot" style="background:#5352ED"></span>Pinky</div>
               </div>
               <div class="finger-count-badge hidden" id="finger-count-badge">✋ –</div>
-              <!-- Game countdown / announcements -->
-              <div class="game-timer hidden" id="game-timer"><i id="game-timer-bar"></i></div>
-              <div class="game-overlay hidden" id="game-overlay"><div class="go-big" id="go-big"></div><div class="go-sub" id="go-sub"></div></div>
             </div>
             <div class="cam-tools"><button class="btn-soft" id="btn-cam">📷 Turn on camera</button></div>
           </div>
@@ -485,18 +455,14 @@ button{font-family:inherit;}
             <div class="play-result"><div class="label" id="play-label">…</div><div class="confi" id="play-confi">show me something!</div></div>
             <div class="bars" id="play-bars"></div>
             <div class="closest hidden" id="closest-wrap"><span class="lbl">Most like what I learned:</span><span id="closest-imgs"></span></div>
+            <button class="btn-mini hidden" id="btn-saliency">🔍 What did the AI look at?</button>
             <!-- Live recognition process -->
             <div id="process-panel" style="display:none"><div class="proc-title">🔍 Waiting to see something…</div></div>
             <div class="game-card" id="game-card">
-              <h4>🎮 Playtime Games</h4>
-              <p class="game-hint" id="game-hint">Pick a game to play with your trained AI!</p>
-              <div class="game-menu" id="game-menu"></div>
-              <div class="game-stage hidden" id="game-stage">
-                <div class="gs-head"><b id="gs-name">Game</b><button class="gs-exit" id="gs-exit">✕ Exit</button></div>
-                <div class="game-task" id="gs-body">Press Start!</div>
-                <div class="game-score" id="gs-score"></div>
-                <div class="game-row"><button class="btn-game" id="btn-game">▶ Start</button></div>
-              </div>
+              <h4>🎯 Playtime Challenge</h4>
+              <div class="game-task" id="game-task">Press Start!</div>
+              <div class="game-score" id="game-score">Score: 0</div>
+              <div class="game-row"><button class="btn-game" id="btn-game">▶ Start challenge</button></div>
             </div>
           </div>
         </div>
@@ -508,21 +474,17 @@ button{font-family:inherit;}
       <h3 class="lv-head">🔬 See how your AI is learning</h3>
       <p class="lv-sub">These pictures show what's happening inside the AI brain — not magic, just patterns!</p>
       <div class="lv-grid">
-        <!-- Augmentation LAB (image only) — students make variations themselves -->
+        <!-- Augmentation (image only) -->
         <div class="viz" id="viz-aug">
-          <h4>📐 Make more data from one snap — your turn!</h4>
-          <p class="why">Snap a photo, then <b>you</b> create the variations. Each version you make is added to your AI's training data. More variety (flips &amp; lighting) = a smarter, fairer AI!</p>
-          <div class="aug-lab hidden" id="aug-lab">
-            <div class="aug-cell aug-base-cell"><canvas id="aug-base" width="120" height="120"></canvas><span>📸 your snap</span></div>
-            <div class="aug-arrow">→</div>
-            <div class="aug-actions">
-              <button class="aug-act" id="aug-flip" disabled>↔️ Make a Flip</button>
-              <button class="aug-act" id="aug-bright" disabled>☀️ Make it Brighter</button>
-              <button class="aug-act" id="aug-dark" disabled>🌙 Make it Darker</button>
-            </div>
+          <h4>📐 More data from one snap</h4>
+          <p class="why">Each photo you take becomes 4 versions (flip, brighter, darker). More examples = a smarter, fairer AI.</p>
+          <div class="aug-grid" id="aug-grid">
+            <div class="aug-cell"><canvas width="120" height="120"></canvas><span>original</span></div>
+            <div class="aug-cell"><canvas width="120" height="120"></canvas><span>flipped</span></div>
+            <div class="aug-cell"><canvas width="120" height="120"></canvas><span>brighter</span></div>
+            <div class="aug-cell"><canvas width="120" height="120"></canvas><span>darker</span></div>
           </div>
-          <div class="aug-made" id="aug-made"></div>
-          <div class="placeholder" id="aug-ph">Snap a picture in a category, then build your own variations ✨</div>
+          <div class="placeholder" id="aug-ph">Snap a picture in a category to see this ✨</div>
         </div>
 
         <!-- Feature map cluster (image + pose) -->
@@ -543,8 +505,22 @@ button{font-family:inherit;}
           <div class="placeholder" id="acc-ph">Build your sound AI to see its learning curve 📈</div>
         </div>
 
+        <!-- Saliency (image) -->
+        <div class="viz hidden" id="viz-saliency">
+          <h4>🔥 Where the AI looked</h4>
+          <p class="why">Red = important to the AI's guess. Blue = ignored. Try it in Playtime to see what caught its attention!</p>
+          <div style="display:flex;gap:10px;align-items:center;justify-content:center"><canvas id="sal-canvas" width="220" height="220" style="border-radius:12px;background:#eee;max-width:48%"></canvas></div>
+          <div class="placeholder" id="sal-ph">In Playtime, tap “What did the AI look at?”</div>
+        </div>
+
+        <!-- Behind the scenes explainer (all modes) -->
+        <div class="viz span2" id="viz-bts">
+          <h4>🔧 Behind the scenes — how I actually learned</h4>
+          <p class="why">No magic! Here's exactly what happened inside the AI when you pressed “Build”.</p>
+          <div id="bts-body"><div class="placeholder">Build your AI to reveal what happened inside its brain 🧠</div></div>
+        </div>
       </div>
-      <div class="tip" id="lv-tip">💡 Tip: collect at least <b>2 categories</b>, snap <b>several photos each</b> from different angles, and use the buttons to <b>make flips &amp; lighting changes yourself</b>. The AI learns from variety!</div>
+      <div class="tip" id="lv-tip">💡 Tip: collect at least <b>2 categories</b> and aim for <b>10+ examples each</b>, with different angles and lighting. The AI learns from variety!</div>
     </div>
   </div>
 
@@ -696,17 +672,17 @@ function openActivity(type){
   $('in-newclass').placeholder = type==='image'?'New category… e.g. Apple 🍎':type==='pose'?'New pose… e.g. Hands Up 🙌':'New sound… e.g. Clap 👏';
   // visuals visibility
   $('viz-aug').classList.toggle('hidden',type!=='image');
+  $('viz-saliency').classList.toggle('hidden',type!=='image');
   $('viz-cluster').classList.toggle('hidden',type==='sound');
   $('viz-acc').classList.toggle('hidden',type!=='sound');
   if(projectType==='pose')ensurePoseModel(); else if(type==='sound')ensureSoundModel(); else ensureImageModel();
   $('finger-legend').classList.toggle('hidden', type!=='pose');
   $('finger-count-badge').classList.toggle('hidden', type!=='pose');
-  resetAugLab(); resetGameUI();
   switchMode('learn'); renderClasses(); updateCount(); refreshVisuals();
   setHint();
 }
 $('btn-back').onclick=()=>{stopAll();$('activity-view').classList.add('hidden');$('picker-view').classList.remove('hidden');projectType=null;};
-function stopAll(){stopPredict();stopMic();stopGame();resetAugLab();if(soundTransfer&&soundTransfer.isListening())soundTransfer.stopListening();}
+function stopAll(){stopPredict();stopMic();if(soundTransfer&&soundTransfer.isListening())soundTransfer.stopListening();}
 
 function setHint(){
   const learn=mode==='learn';
@@ -902,11 +878,16 @@ async function capture(id){
   const st=S[projectType];const cls=st.classes.find(c=>c.id===id);if(!cls)return;
   if(projectType==='image'){
     if(!cameraOn)return toast('Turn on the camera first 📷');await ensureImageModel();
-    const f=grabFrame(null);
-    addImageSample(id,f);              // add the ORIGINAL snap
-    lastSnap={classId:id, base:f, done:{}};
-    setupAugLab(f);                    // let the student build variations themselves
-    toast('📸 Snap added! Now make your own variations below 👇');
+    let lastFrames=[];
+    for(const a of AUG){
+      const f=grabFrame(a==='orig'?null:a);lastFrames.push(f);
+      const act=mobilenetNet.infer(f,true);const vec=Array.from(act.dataSync());act.dispose();
+      imageKNN.addExample(tf.tensor(vec),id);
+      const thumb=cls.thumbs.length<MAX_THUMBS?f.toDataURL('image/jpeg',.5):null;
+      if(thumb)cls.thumbs.push(thumb);
+      st.samples.push({label:id,vec,thumb});cls.count++;
+    }
+    showAugmentation(lastFrames);
   }else if(projectType==='pose'){
     if(!cameraOn)return toast('Turn on the camera first 📷');await ensurePoseModel();
     const v=$('video');
@@ -920,57 +901,6 @@ async function capture(id){
     return toast('Use the 🎙 Record button on each sound card!');
   }
   st.built=false;st.key='';renderClasses();updateCount();refreshPlayState();saveData();
-}
-
-/* ---- Manual data augmentation: the student creates each variation ---- */
-let lastSnap=null;
-function addImageSample(id,canvas){
-  const st=S.image;const cls=st.classes.find(c=>c.id===id);if(!cls)return;
-  const act=mobilenetNet.infer(canvas,true);const vec=Array.from(act.dataSync());act.dispose();
-  imageKNN.addExample(tf.tensor(vec),id);
-  const thumb=cls.thumbs.length<MAX_THUMBS?canvas.toDataURL('image/jpeg',.6):null;
-  if(thumb)cls.thumbs.push(thumb);
-  st.samples.push({label:id,vec,thumb});cls.count++;
-  st.built=false;st.key='';
-}
-function transformCanvas(base,kind){
-  const c=document.createElement('canvas');c.width=224;c.height=224;const ctx=c.getContext('2d');
-  ctx.save();if(kind==='flip'){ctx.translate(224,0);ctx.scale(-1,1);}ctx.drawImage(base,0,0);ctx.restore();
-  if(kind==='bright'||kind==='dark'){ctx.globalCompositeOperation=kind==='bright'?'lighter':'multiply';
-    ctx.fillStyle=kind==='bright'?'rgba(255,255,255,.22)':'rgba(120,120,120,.5)';ctx.fillRect(0,0,224,224);ctx.globalCompositeOperation='source-over';}
-  return c;
-}
-function setupAugLab(base){
-  $('aug-ph').classList.add('hidden');
-  $('aug-lab').classList.remove('hidden');
-  $('aug-base').getContext('2d').drawImage(base,0,0,120,120);
-  ['flip','bright','dark'].forEach(k=>{const b=$('aug-'+k);b.disabled=false;b.classList.remove('done');});
-  // keep previously made cells from this lab session? reset for clarity
-  $('aug-made').innerHTML='';
-}
-function resetAugLab(){
-  lastSnap=null;
-  const lab=$('aug-lab');if(lab)lab.classList.add('hidden');
-  const ph=$('aug-ph');if(ph)ph.classList.remove('hidden');
-  const made=$('aug-made');if(made)made.innerHTML='';
-}
-function addAug(kind){
-  if(projectType!=='image')return;
-  if(!lastSnap){toast('Snap a photo first! 📸');return;}
-  if(lastSnap.done[kind]){toast('Already made that one — snap a new photo for more!');return;}
-  const variant=transformCanvas(lastSnap.base,kind);
-  addImageSample(lastSnap.classId,variant);
-  lastSnap.done[kind]=true;
-  const label={flip:'flipped',bright:'brighter',dark:'darker'}[kind];
-  const b=$('aug-'+kind);b.disabled=true;b.classList.add('done');b.textContent='✓ '+b.textContent.replace('✓ ','');
-  const cell=document.createElement('div');cell.className='aug-cell';
-  const cv=document.createElement('canvas');cv.width=70;cv.height=70;cv.getContext('2d').drawImage(variant,0,0,70,70);
-  const sp=document.createElement('span');sp.textContent='✓ '+label;
-  cell.appendChild(cv);cell.appendChild(sp);$('aug-made').appendChild(cell);
-  renderClasses();updateCount();refreshPlayState();saveData();
-  const cls=S.image.classes.find(c=>c.id===lastSnap.classId);
-  if(lastSnap.done.flip&&lastSnap.done.bright&&lastSnap.done.dark)
-    toast(`🌟 Brilliant! "${cls?cls.name:''}" now has 4 versions from one snap!`);
 }
 /* 76-dim vector: 17 body keypoints (×2) + first hand's 21 landmarks (×2), zero-filled if no hand */
 function poseHandVector(body,hands,v){
@@ -1120,6 +1050,12 @@ function showProcess(res,probe,detectedFingerCount){
   panel.innerHTML=h;
 }
 
+function showAugmentation(frames){
+  $('aug-ph').classList.add('hidden');
+  const cells=$('aug-grid').querySelectorAll('canvas');
+  frames.forEach((f,i)=>{const ctx=cells[i].getContext('2d');ctx.clearRect(0,0,120,120);ctx.drawImage(f,0,0,120,120);});
+}
+
 /* ===========================================================
    BUILD THE AI (with neuron animation + real work)
    =========================================================== */
@@ -1162,12 +1098,36 @@ async function buildBrain(){
   }
   neuronAnim(false);
   $('build-title').textContent='Your AI is ready! 🎉';$('build-step').innerHTML='Switch to <b>Playtime</b> and try it out!';
+  fillBehindScenes();
   saveData();await sleep(1100);$('build-overlay').classList.add('hidden');
   refreshVisuals();refreshPlayState();toast('🎉 AI brain built! Go to Playtime!');switchMode('play');
 }
 
 /* Behind-the-scenes recap with the student's REAL numbers */
-
+function fillBehindScenes(){
+  const cl=curClasses(),total=cl.reduce((s,c)=>s+c.count,0),body=$('bts-body');
+  const step=(ic,t,d)=>`<div class="bts-step"><div class="bn">${ic}</div><div class="bt"><b>${t}</b><span>${d}</span></div></div>`;
+  if(projectType==='image'){
+    body.innerHTML=
+      step('🔢','Pictures → numbers',`Each photo was passed through a ready-made vision network (MobileNet) that turned it into a list of <em>1024 numbers</em> describing shapes, colours & textures.`)+
+      step('📦','It memorised your examples',`All <em>${total} examples</em> across <em>${cl.length} categories</em> were stored as number-lists. Nothing was sent to the internet.`)+
+      step('🗳️','How it guesses (KNN)',`For a new picture it finds the <em>3 closest</em> stored examples and they <em>vote</em>. The category with most votes wins.`)+
+      step('⚖️','Why your data matters',`It only knows what you showed it. More examples and more variety = fairer, smarter guesses.`);
+  }else if(projectType==='pose'){
+    body.innerHTML=
+      step('🦴','Body + fingers → points',`A body network (PoseNet) found <em>17 body joints</em> and a hand network (Handpose) found <em>21 finger points</em> per hand.`)+
+      step('🔢','Pose → numbers',`Each pose became <em>76 numbers</em> (body + fingers). Your <em>${total} captures</em> across <em>${cl.length} poses</em> are stored as number-lists.`)+
+      step('🗳️','How it guesses (KNN)',`A new pose is compared to the <em>3 closest</em> stored poses, which vote for the answer.`)+
+      step('🤟','Fingers count too',`Because finger points are included, gestures like ✌️ or 👍 can change the AI's answer.`);
+  }else{
+    const acc=S.sound.history&&S.sound.history.length?Math.round(S.sound.history[S.sound.history.length-1]*100):'—';
+    body.innerHTML=
+      step('🎵','Sound → spectrogram',`Each ~1-second clip became a <em>picture of its frequencies</em> (a spectrogram) — high notes on top, low notes below.`)+
+      step('🧠','A real neural network',`Unlike pictures & poses, here a small <em>neural network</em> was trained — it has adjustable "knobs" (weights).`)+
+      step('🔁','Practice = epochs',`It practised <em>40 times</em> (epochs). Each round it checked its mistakes and nudged the knobs to do better.`)+
+      step('📈','Final practice score',`Its training score reached about <em>${acc}%</em>. Watch the learning curve above to see it climb!`);
+  }
+}
 
 /* ===========================================================
    LEARNING VISUALS
@@ -1182,7 +1142,10 @@ function refreshVisuals(){
     $('cluster-ph').classList.toggle('hidden',!!has);
     if(has)drawCluster(); else clearCanvas('cluster-canvas');
   }
+  $('sal-ph').classList.toggle('hidden',false);
   // behind-the-scenes
+  if(st.built)fillBehindScenes();
+  else $('bts-body').innerHTML='<div class="placeholder">Build your AI to reveal what happened inside its brain 🧠</div>';
 }
 function clearCanvas(id){const c=$(id);c.getContext('2d').clearRect(0,0,c.width,c.height);}
 
@@ -1249,7 +1212,25 @@ function drawAccuracy(pts){
 }
 
 /* occlusion saliency (image only) */
-
+async function runSaliency(){
+  if(projectType!=='image'||!cameraOn||!S.image.built)return;
+  toast('Looking closely… 🔍');
+  const base=grabFrame(null);
+  const bAct=mobilenetNet.infer(base,true);const bRes=await imageKNN.predictClass(bAct,K);bAct.dispose();
+  const winner=bRes.label,bConf=bRes.confidences[winner]||0;const grid=6,cell=224/grid,heat=[];
+  for(let gy=0;gy<grid;gy++)for(let gx=0;gx<grid;gx++){
+    const cc=document.createElement('canvas');cc.width=224;cc.height=224;const cx=cc.getContext('2d');
+    cx.drawImage(base,0,0);cx.fillStyle='rgba(128,128,128,1)';cx.fillRect(gx*cell,gy*cell,cell,cell);
+    const a=mobilenetNet.infer(cc,true);const r=await imageKNN.predictClass(a,K);a.dispose();
+    heat.push(Math.max(0,bConf-(r.confidences[winner]||0)));
+  }
+  const max=Math.max(...heat,0.001);
+  const sc=$('sal-canvas'),sx=sc.getContext('2d');sc.width=220;sc.height=220;sx.drawImage(base,0,0,220,220);
+  let k=0;for(let gy=0;gy<grid;gy++)for(let gx=0;gx<grid;gx++){const t=heat[k++]/max;
+    sx.fillStyle=`rgba(${Math.round(60+195*t)},${Math.round(120*(1-t))},${Math.round(220*(1-t))},${0.15+0.45*t})`;
+    sx.fillRect(gx*(220/grid),gy*(220/grid),220/grid,220/grid);}
+  $('sal-ph').classList.add('hidden');toast('Red = what mattered most! 🔥');
+}
 
 /* ===========================================================
    PLAYTIME — prediction + games
@@ -1257,10 +1238,10 @@ function drawAccuracy(pts){
 function refreshPlayState(){
   const st=S[projectType],can=st.built&&curClasses().length>=2;
   $('play-empty').classList.toggle('hidden',can);$('play-live').classList.toggle('hidden',!can);
+  $('btn-saliency').classList.toggle('hidden',projectType!=='image');
   $('closest-wrap').classList.toggle('hidden',projectType==='sound');
   if(mode==='play'){
     if(!can){stopPredict();return;}
-    if(!G.id)renderGameMenu();
     if(projectType==='sound')startSoundListen();
     else if(projectType==='image'&&cameraOn)startPredict();
     // pose prediction runs inside the unified poseLoop (started with the camera)
@@ -1292,8 +1273,7 @@ function renderPrediction(res,frame,vec,fingerCount){
   if(!probe&&frame&&mobilenetNet){const t=mobilenetNet.infer(frame,true);probe=Array.from(t.dataSync());t.dispose();}
   if(probe&&projectType!=='sound')showClosest(probe);
   showProcess(res,probe,fingerCount);
-  livePred={id:res.label||null,conf,t:performance.now()};
-  if(G.running)gameTick();
+  if(window._game&&window._game.active)checkGame(win?win.id:null,conf);
 }
 function showClosest(probe){
   const st=S[projectType];const withThumb=st.samples.filter(s=>s.thumb);
@@ -1319,250 +1299,28 @@ function startSoundListen(){
     // build pseudo-res for showProcess
     const confMap={};st.classes.forEach((c,i)=>{const idx=labels.indexOf(c.id);confMap[c.id]=idx>=0?scores[idx]:0;});
     showProcess({label:lab,confidences:confMap},null,undefined);
-    livePred={id:lab||null,conf:Math.round(best*100),t:performance.now()};
-    if(G.running)gameTick();
+    if(window._game&&window._game.active&&cls)checkGame(cls.id,Math.round(best*100));
   },{probabilityThreshold:0.6,overlapFactor:0.5}).catch(e=>console.error(e));
 }
 
-/* ===========================================================
-   PLAYTIME GAMES — multiple selectable games
-   =========================================================== */
-const GC=55; // confidence needed for a correct move in games
-let livePred={id:null,conf:0,t:0};
-const GAMES=[
-  {id:'flash',   name:'⚡ Quick Flash',  desc:'Show the called category before the timer runs out!', modes:['image','pose','sound']},
-  {id:'showdown',name:'🥊 Showdown',     desc:'Rock-Paper-Scissors style face-off vs the computer!', modes:['image','pose']},
-  {id:'simon',   name:'🧠 Simon Says',   desc:'Watch the sequence, then repeat it from memory!', modes:['image','pose','sound']},
-  {id:'clock',   name:'⏱️ Beat the Clock',desc:'How many can you get right in 30 seconds?', modes:['image','pose','sound']},
-  {id:'hold',    name:'🎯 Hold Steady',  desc:'Hold the pose/picture steady for 3 seconds!', modes:['image','pose']},
-];
-let G={id:null,running:false,busy:false,score:0,cpuScore:0,streak:0,target:null,
-       round:0,maxRound:5,cpuMove:null,seq:[],seqPos:0,holdMs:0,deadline:0,timers:[],raf:null};
-
-function classById(id){return curClasses().find(c=>c.id===id)||{name:'?',color:'#888'};}
-function getLive(){return (performance.now()-livePred.t<800)?livePred:{id:null,conf:0};}
-function later(fn,ms){const t=setTimeout(fn,ms);G.timers.push(t);return t;}
-function clearGameTimers(){G.timers.forEach(clearTimeout);G.timers=[];if(G.raf){cancelAnimationFrame(G.raf);G.raf=null;}}
-
-/* audio cues (skipped in sound mode to avoid mic feedback) */
-let _actx=null;
-function beep(freq,dur){if(projectType==='sound')return;try{_actx=_actx||new (window.AudioContext||window.webkitAudioContext)();const o=_actx.createOscillator(),g=_actx.createGain();o.type='sine';o.frequency.value=freq;o.connect(g);g.connect(_actx.destination);g.gain.setValueAtTime(.16,_actx.currentTime);g.gain.exponentialRampToValueAtTime(.001,_actx.currentTime+dur);o.start();o.stop(_actx.currentTime+dur);}catch(e){}}
-function gameSpeak(text){if(projectType==='sound')return;try{if(window.speechSynthesis){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.rate=1.05;u.pitch=1.1;speechSynthesis.speak(u);}}catch(e){}}
-
-/* camera overlay + timer helpers */
-function gameOverlay(big,sub,cls){const o=$('game-overlay');o.classList.remove('hidden');const b=$('go-big');b.textContent=big||'';b.className='go-big '+(cls||'');$('go-sub').textContent=sub||'';}
-function hideGameOverlay(){$('game-overlay').classList.add('hidden');}
-function gameTimerBar(frac){const t=$('game-timer');if(frac==null){t.classList.add('hidden');return;}t.classList.remove('hidden');$('game-timer-bar').style.width=Math.max(0,Math.min(100,frac*100))+'%';}
-
-/* menu / stage management */
-function renderGameMenu(){
-  const menu=$('game-menu');if(!menu)return;
-  menu.innerHTML=GAMES.filter(g=>g.modes.includes(projectType)).map(g=>
-    `<button class="game-btn" data-game="${g.id}"><b>${g.name}</b><span>${g.desc}</span></button>`).join('');
-  menu.querySelectorAll('.game-btn').forEach(b=>b.onclick=()=>selectGame(b.dataset.game));
+/* ----- Playtime mini-game: "Show me…" ----- */
+window._game={active:false,target:null,score:0};
+function startGame(){
+  const cl=curClasses();if(cl.length<2)return;
+  window._game={active:true,target:null,score:0};$('game-score').textContent='Score: 0';
+  nextGameTask();$('btn-game').textContent='⏹ Stop';
 }
-function resetGameUI(){
-  stopGame();G.id=null;
-  const st=$('game-stage');if(st)st.classList.add('hidden');
-  const m=$('game-menu');if(m)m.classList.remove('hidden');
-  const h=$('game-hint');if(h)h.classList.remove('hidden');
-  renderGameMenu();
-}
-function selectGame(id){
-  stopGame();G.id=id;
-  const meta=GAMES.find(g=>g.id===id);
-  $('game-menu').classList.add('hidden');$('game-hint').classList.add('hidden');
-  $('game-stage').classList.remove('hidden');
-  $('gs-name').textContent=meta.name;
-  $('gs-body').textContent=meta.desc;
-  $('gs-score').textContent='';
-  $('btn-game').textContent='▶ Start';
-}
-function exitGame(){stopGame();resetGameUI();}
-function stopGame(){G.running=false;G.busy=false;clearGameTimers();if(window.speechSynthesis)try{speechSynthesis.cancel();}catch(e){}hideGameOverlay();gameTimerBar(null);}
-function startSelectedGame(){({flash:startFlash,showdown:startShowdown,simon:startSimon,clock:startClock,hold:startHold}[G.id]||(()=>{}))();}
-function updateGameScore(){
-  if(G.id==='showdown')$('gs-score').textContent=`You ${G.score} · ${G.cpuScore} CPU`;
-  else if(G.id!=='clock')$('gs-score').textContent='Score: '+G.score;
-}
-function pickTarget(){
-  const cl=curClasses();const t=cl[Math.floor(Math.random()*cl.length)];G.target=t.id;
+function stopGame(){window._game.active=false;$('game-task').textContent='Nice playing! 🎉';$('btn-game').textContent='▶ Start challenge';}
+function nextGameTask(){
+  const cl=curClasses();const t=cl[Math.floor(Math.random()*cl.length)];window._game.target=t.id;
   const verb=projectType==='sound'?'Make the sound':projectType==='pose'?'Strike the pose':'Show me';
-  $('gs-body').innerHTML=`${verb}: <b style="color:${t.color}">${esc(t.name)}</b>!`;
-  gameSpeak(verb+' '+t.name);
+  $('game-task').textContent=`${verb}: ${t.name}!`;window._game.cooldown=Date.now()+1200;
 }
-
-/* ---- Quick Flash ---- */
-function startFlash(){G.running=true;G.score=0;G.streak=0;$('btn-game').textContent='⏹ Stop';updateGameScore();nextFlash();flashTimer();}
-function nextFlash(){if(!G.running)return;G.busy=false;G.deadline=performance.now()+4200;pickTarget();}
-function flashTimer(){
-  if(!G.running||G.id!=='flash')return;
-  const left=G.deadline-performance.now();gameTimerBar(left/4200);
-  if(left<=0&&!G.busy){G.busy=true;G.streak=0;toast('⏱ Too slow!');later(nextFlash,350);}
-  G.raf=requestAnimationFrame(flashTimer);
+function checkGame(predId,conf){
+  const g=window._game;if(!g.active||!g.target||Date.now()<g.cooldown)return;
+  if(predId===g.target&&conf>=60){g.score++;$('game-score').textContent='Score: '+g.score;toast('✅ Correct! +1');g.target=null;setTimeout(()=>{if(g.active)nextGameTask();},700);}
 }
-
-/* ---- Beat the Clock ---- */
-function startClock(){G.running=true;G.score=0;G.busy=false;$('btn-game').textContent='⏹ Stop';G.deadline=performance.now()+30000;pickTarget();clockTimer();}
-function clockTimer(){
-  if(!G.running||G.id!=='clock')return;
-  const left=G.deadline-performance.now();gameTimerBar(left/30000);
-  $('gs-score').textContent=`Score: ${G.score} · ⏱ ${Math.ceil(Math.max(0,left/1000))}s`;
-  if(left<=0){G.running=false;gameTimerBar(null);gameOverlay('⏰ Time!',`You scored ${G.score}!`,'win');$('btn-game').textContent='▶ Play again';later(hideGameOverlay,2400);return;}
-  G.raf=requestAnimationFrame(clockTimer);
-}
-
-/* ---- Hold Steady ---- */
-function startHold(){G.running=true;G.score=0;G.holdMs=0;$('btn-game').textContent='⏹ Stop';updateGameScore();pickTarget();G.raf=requestAnimationFrame(()=>holdLoop(performance.now()));}
-function holdLoop(prev){
-  if(!G.running||G.id!=='hold')return;
-  const now=performance.now(),dt=now-prev,lp=getLive();
-  if(lp.id===G.target&&lp.conf>=GC)G.holdMs+=dt;else G.holdMs=Math.max(0,G.holdMs-dt*1.6);
-  gameTimerBar(G.holdMs/3000);
-  if(G.holdMs>=3000){G.score++;updateGameScore();toast('🎯 Held it! +1');G.holdMs=0;gameTimerBar(0);later(pickTarget,250);}
-  G.raf=requestAnimationFrame(()=>holdLoop(now));
-}
-
-/* ---- Simon Says ---- */
-function startSimon(){G.running=true;G.score=0;G.seq=[];G.seqPos=0;$('btn-game').textContent='⏹ Stop';updateGameScore();simonNextRound();}
-function simonNextRound(){
-  if(!G.running)return;
-  const cl=curClasses();G.seq.push(cl[Math.floor(Math.random()*cl.length)].id);G.seqPos=0;G.busy=true;
-  $('gs-body').textContent='👀 Watch the sequence…';playSimonSeq(0);
-}
-function playSimonSeq(i){
-  if(!G.running)return;
-  if(i>=G.seq.length){G.busy=false;gameOverlay('GO!','Your turn — repeat it!','win');later(hideGameOverlay,750);
-    $('gs-body').innerHTML=`Your turn! Repeat the <b>${G.seq.length}</b> step${G.seq.length>1?'s':''} in order.`;return;}
-  const t=classById(G.seq[i]);
-  gameOverlay(String(i+1),t.name,'');gameSpeak(t.name);beep(523+i*40,.12);
-  $('gs-body').innerHTML=`Step ${i+1} of ${G.seq.length}: <b style="color:${t.color}">${esc(t.name)}</b>`;
-  later(()=>{hideGameOverlay();later(()=>playSimonSeq(i+1),360);},900);
-}
-
-/* ---- Showdown — Rock · Paper · Scissors · Shoot! ---- */
-function isRPS(){const n=curClasses().map(c=>c.name.toLowerCase());return ['rock','paper','scissor'].every(k=>n.some(x=>x.includes(k)));}
-function rpsKind(id){const n=(classById(id)||{}).name||'';const l=n.toLowerCase();if(l.includes('rock'))return 'rock';if(l.includes('paper'))return 'paper';if(l.includes('scissor'))return 'scissors';return null;}
-function rpsEmoji(kind){return {rock:'✊',paper:'✋',scissors:'✌️'}[kind]||'❓';}
-function judge(userId,cpuId){
-  if(!userId)return 'none';
-  if(userId===cpuId)return 'draw';
-  const u=rpsKind(userId),c=rpsKind(cpuId);
-  // Strict RPS rules:  Rock beats Scissors | Scissors beats Paper | Paper beats Rock
-  if(u&&c){
-    if((u==='rock'&&c==='scissors')||(u==='scissors'&&c==='paper')||(u==='paper'&&c==='rock'))return 'win';
-    return 'lose';
-  }
-  // Non-RPS: mirror match — show same class as CPU to win
-  return 'lose';
-}
-function startShowdown(){
-  G.running=true;G.score=0;G.cpuScore=0;G.round=0;G.maxRound=5;
-  $('btn-game').textContent='⏹ Stop';$('gs-score').textContent='You 0 · 0 CPU';
-  $('gs-body').innerHTML='Best of 5 — get ready! 🤜🤛';
-  later(showdownRound,800);
-}
-function showdownRound(){
-  if(!G.running)return;
-  G.round++;if(G.round>G.maxRound)return showdownEnd();
-  G.busy=true;
-  $('gs-body').innerHTML=`Round <b>${G.round}</b> of ${G.maxRound}`;
-
-  // Pick CPU move now but keep hidden until SHOOT
-  const cl=curClasses();
-  G.cpuMove=cl[Math.floor(Math.random()*cl.length)].id;
-
-  // Chant: Rock (t=0) · Paper (t=650) · Scissors (t=1300) · SHOOT! (t=1950)
-  const chant=[
-    {t:0,   word:'✊',  sub:'Rock…',      freq:440},
-    {t:700, word:'✋',  sub:'Paper…',     freq:494},
-    {t:1400,word:'✌️', sub:'Scissors…',  freq:523},
-    {t:2100,word:'💥 SHOOT!', sub:'Show your move!', freq:660, shoot:true},
-  ];
-  chant.forEach(({t,word,sub,freq,shoot})=>{
-    later(()=>{
-      gameOverlay(word,sub,'');beep(freq,.14);
-      if(shoot){
-        // CPU move is already picked (G.cpuMove) — keep it hidden until reveal
-        showdownTimer();
-      }
-    },t);
-  });
-  // TTS fires the full chant right at the start
-  gameSpeak('Rock… Paper… Scissors… Shoot!');
-}
-
-let _sdTimerStart=0;
-function showdownTimer(){
-  _sdTimerStart=performance.now();
-  function tick(){
-    if(!G.running||G.id!=='showdown')return;
-    const frac=1-((performance.now()-_sdTimerStart)/2500);
-    gameTimerBar(Math.max(0,frac));
-    if(frac<=0){showdownReveal();return;}
-    G.raf=requestAnimationFrame(tick);
-  }
-  G.raf=requestAnimationFrame(tick);
-}
-function showdownReveal(){
-  if(!G.running)return;
-  G.busy=false;gameTimerBar(null);
-  const cpuC=classById(G.cpuMove);
-  const kind=rpsKind(G.cpuMove);const em=kind?rpsEmoji(kind):'';
-  const lp=getLive();
-  const userC=lp.id&&lp.conf>=GC?classById(lp.id):null;
-  const result=judge(userC?lp.id:null,G.cpuMove);
-  const uk=userC?rpsKind(lp.id):null;const ue=uk?rpsEmoji(uk):'';
-  let big,cls='',detail;
-  if(!userC){
-    big='🤔 Missed!';
-    detail=`Couldn't detect your move  •  CPU had: ${em} ${esc(cpuC.name)}`;
-  }else if(result==='win'){
-    G.score++;big='🎉 YOU WIN!';cls='win';
-    detail=`You: ${ue} ${esc(userC.name)}  •  CPU: ${em} ${esc(cpuC.name)}`;
-  }else if(result==='lose'){
-    G.cpuScore++;big='🤖 CPU WINS';cls='lose';
-    detail=`You: ${ue} ${esc(userC.name)}  •  CPU: ${em} ${esc(cpuC.name)}`;
-  }else{
-    big='🤝 DRAW';
-    detail=`You: ${ue} ${esc(userC.name)}  •  CPU: ${em} ${esc(cpuC.name)}`;
-  }
-  gameOverlay(big,detail,cls);
-  $('gs-body').innerHTML=detail;
-  updateGameScore();
-  later(()=>{hideGameOverlay();later(showdownRound,500);},2400);
-}
-function showdownEnd(){
-  G.running=false;
-  const win=G.score>G.cpuScore,draw=G.score===G.cpuScore;
-  const big=win?'🏆 You win the match!':draw?'🤝 It\'s a tie!':'🤖 CPU wins!';
-  gameOverlay(big,`Final: You ${G.score} · ${G.cpuScore} CPU`,win?'win':draw?'':'lose');
-  $('gs-score').textContent=`Final: You ${G.score} · ${G.cpuScore} CPU`;
-  $('btn-game').textContent='▶ Play again';
-  later(hideGameOverlay,3000);
-}
-
-/* continuous-game tick — called whenever a fresh prediction arrives */
-function gameTick(){
-  if(!G.running||G.busy)return;
-  const lp=getLive();if(!lp.id)return;
-  if(G.id==='flash'){
-    if(lp.id===G.target&&lp.conf>=GC){G.busy=true;G.score++;G.streak++;updateGameScore();toast('✅ +1'+(G.streak>2?` 🔥${G.streak} streak!`:''));gameTimerBar(null);later(nextFlash,600);}
-  }else if(G.id==='clock'){
-    if(lp.id===G.target&&lp.conf>=GC){G.busy=true;G.score++;toast('✅ +1');later(()=>{pickTarget();G.busy=false;},420);}
-  }else if(G.id==='simon'){
-    const expect=G.seq[G.seqPos];
-    if(lp.id===expect&&lp.conf>=GC){G.busy=true;const t=classById(expect);G.seqPos++;toast(`✅ ${t.name} (${G.seqPos}/${G.seq.length})`);
-      if(G.seqPos>=G.seq.length){G.score++;updateGameScore();$('gs-body').textContent='🌟 Great memory! Next round…';later(simonNextRound,1000);}
-      else later(()=>{G.busy=false;},650);}
-  }
-}
-$('btn-game').onclick=()=>{
-  if(!G.id)return;
-  if(G.running){stopGame();$('btn-game').textContent='▶ Start';$('gs-body').textContent='Stopped. Press Start to play again!';return;}
-  startSelectedGame();
-};
-$('gs-exit').onclick=exitGame;
+$('btn-game').onclick=()=>{window._game.active?stopGame():startGame();};
 
 /* ===========================================================
    MODE SWITCH
@@ -1572,7 +1330,7 @@ function switchMode(m){
   $('tab-learn').classList.toggle('active',learn);$('tab-play').classList.toggle('active',!learn);
   $('learn-panel').classList.toggle('hidden',!learn);$('play-panel').classList.toggle('hidden',learn);
   setHint();
-  if(learn){stopPredict();stopGame();
+  if(learn){stopPredict();if(window._game)window._game.active=false;$('btn-game').textContent='▶ Start challenge';
     const pp=$('process-panel');if(pp)pp.style.display='none';}
   else refreshPlayState();
 }
@@ -1612,9 +1370,7 @@ $('btn-cam').onclick=toggleCamera;$('cam-flip').onclick=flipCamera;$('btn-mic').
 $('btn-addclass').onclick=addClass;$('in-newclass').addEventListener('keydown',e=>{if(e.key==='Enter')addClass();});
 $('btn-build').onclick=buildBrain;
 $('tab-learn').onclick=()=>switchMode('learn');$('tab-play').onclick=()=>switchMode('play');
-$('aug-flip').onclick=()=>addAug('flip');
-$('aug-bright').onclick=()=>addAug('bright');
-$('aug-dark').onclick=()=>addAug('dark');
+$('btn-saliency').onclick=runSaliency;
 window.delClass=delClass;window.capture=capture;window.recordSound=recordSound;
 window.toggleRecipe=toggleRecipe;window.updateRuleDesc=updateRuleDesc;window.updateThreshold=updateThreshold;
 window.toggleFeature=toggleFeature;window.setFingerCount=setFingerCount;
