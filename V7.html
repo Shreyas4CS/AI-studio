@@ -15,7 +15,9 @@
 <!-- Image model: MobileNet + KNN -->
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.1/dist/mobilenet.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/knn-classifier@1.2.6/dist/knn-classifier.min.js"></script>
-
+<!-- Pose model: PoseNet (body) + Handpose (fingers) -->
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/posenet@2.2.2/dist/posenet.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/handpose@0.0.7/dist/handpose.min.js"></script>
 <!-- Sound model: Speech Commands (transfer learning) -->
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/speech-commands@0.5.4/dist/speech-commands.min.js"></script>
 
@@ -105,7 +107,7 @@ button{font-family:inherit;}
 .pcard h3{font-size:22px;font-weight:700;}
 .pcard p{color:var(--ink2);font-weight:600;font-size:13.5px;margin-top:4px;}
 .pcard .ribbon{position:absolute;top:0;left:0;right:0;height:8px;}
-.pcard.image .ribbon{background:var(--sky);} .pcard.sound .ribbon{background:var(--mint);}
+.pcard.image .ribbon{background:var(--sky);} .pcard.pose .ribbon{background:var(--grape);} .pcard.sound .ribbon{background:var(--mint);}
 
 /* ===== MODE TABS ===== */
 .topbar{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;padding:18px 16px 4px;}
@@ -241,7 +243,7 @@ button{font-family:inherit;}
 .btn-game:active{transform:translateY(2px);}
 
 /* game camera overlay */
-.game-overlay{position:absolute;inset:0;z-index:8;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(20,12,8,.22);border-radius:inherit;text-align:center;padding:12px;}
+.game-overlay{position:absolute;inset:0;z-index:8;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(20,12,8,.32);backdrop-filter:blur(2px);border-radius:inherit;text-align:center;padding:12px;}
 .go-big{font-size:54px;font-weight:800;color:#fff;text-shadow:0 3px 14px rgba(0,0,0,.55);line-height:1.05;animation:gopop .25s cubic-bezier(.34,1.56,.64,1);}
 .go-big.win{color:#7CF0B0;} .go-big.lose{color:#FF9BA8;}
 .go-sub{font-size:18px;font-weight:700;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.6);margin-top:6px;}
@@ -311,6 +313,10 @@ button{font-family:inherit;}
 .fcount-btn:hover{border-color:var(--grape);} .fcount-btn.on{background:var(--grape);color:#fff;border-color:var(--grape);}
 
 /* ===== FINGER color legend ===== */
+.finger-legend{position:absolute;bottom:8px;left:8px;z-index:5;display:flex;flex-direction:column;gap:3px;}
+.fl-row{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:700;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.7);}
+.fl-dot{width:8px;height:8px;border-radius:3px;}
+.finger-count-badge{position:absolute;top:8px;right:8px;z-index:5;background:rgba(0,0,0,.65);color:#fff;border-radius:10px;padding:5px 9px;font-weight:700;font-size:14px;backdrop-filter:blur(4px);}
 
 /* nav title */
 .nav-title{font-size:22px;font-weight:800;background:linear-gradient(120deg,var(--orange),#FF6FA5 55%,var(--grape));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-.3px;white-space:nowrap;}
@@ -342,31 +348,6 @@ button{font-family:inherit;}
 .modal-confirm:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(200,30,60,.3);}
 
 /* toast */
-/* camera required popup */
-.cam-req{position:fixed;inset:0;z-index:250;display:flex;align-items:center;justify-content:center;background:rgba(30,20,14,.5);backdrop-filter:blur(6px);}
-.cam-req.hidden{display:none;}
-.cam-req-box{background:#fff;border-radius:24px;padding:28px 24px;max-width:320px;width:100%;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.2);animation:modal-in .25s cubic-bezier(.34,1.56,.64,1) both;}
-.cam-req-box .ci{font-size:44px;margin-bottom:10px;}
-.cam-req-box h3{font-size:19px;font-weight:800;margin-bottom:8px;}
-.cam-req-box p{font-size:13.5px;color:var(--ink2);font-weight:600;margin-bottom:18px;line-height:1.4;}
-.cam-req-btns{display:flex;gap:9px;}
-.btn-cam-req{flex:1;padding:12px;border-radius:13px;border:none;font-family:inherit;font-weight:700;font-size:14px;cursor:pointer;}
-.btn-cam-req.primary{background:var(--orange);color:#fff;box-shadow:0 4px 0 rgba(200,100,0,.3);}
-.btn-cam-req.secondary{background:var(--cream2);color:var(--ink2);}
-/* RPS round table */
-.rps-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px;border-radius:12px;overflow:hidden;}
-.rps-table th{background:var(--orange);color:#fff;padding:7px 10px;font-weight:700;text-align:center;}
-.rps-table td{padding:7px 10px;text-align:center;font-weight:700;border-bottom:1.5px solid var(--line);}
-.rps-table tr:last-child td{border-bottom:none;}
-.rps-table tr:nth-child(even) td{background:#FFFBF8;}
-.td-win{color:#1A6643;} .td-lose{color:#CC2233;} .td-draw{color:var(--ink2);}
-.rps-next-btn{width:100%;margin-top:10px;padding:13px;border-radius:14px;border:none;background:linear-gradient(135deg,var(--grape),#7B5CF5);color:#fff;font-family:inherit;font-weight:800;font-size:15px;cursor:pointer;box-shadow:0 5px 0 rgba(100,60,200,.3);transition:.12s;}
-.rps-next-btn:active{transform:translateY(3px);}
-.rps-wrap{padding:6px 0;}
-.game-btn .badge-new{display:inline-block;background:var(--orange);color:#fff;font-size:9px;font-weight:800;padding:1px 5px;border-radius:4px;vertical-align:middle;margin-left:4px;letter-spacing:.5px;}
-/* sound game badge */
-.sound-game-hint{font-size:12px;font-weight:700;color:var(--mint-d,#1a9e7a);background:#E8FAF4;border-radius:8px;padding:4px 8px;margin-top:3px;display:inline-block;}
-
 .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(120px);z-index:90;background:var(--ink);color:#fff;padding:13px 22px;border-radius:14px;font-weight:700;font-size:14px;box-shadow:var(--sh);transition:transform .35s cubic-bezier(.34,1.56,.64,1);}
 .toast.show{transform:translateX(-50%) translateY(0);}
 
@@ -399,7 +380,7 @@ button{font-family:inherit;}
       <img id="logo-landing" src="cognospace-logo.png" alt="CognoSpace">
     </a>
   </div>
-  <p class="tagline">A hands-on lab where you <span class="hl">teach a real AI</span> with pictures &amp; sounds — and discover <span class="hl">exactly how it learns!</span> ✨</p>
+  <p class="tagline">A hands-on lab where you <span class="hl">teach a real AI</span> with pictures, poses &amp; sounds — and discover <span class="hl">exactly how it learns!</span> ✨</p>
 
   <div class="session-card">
     <h2>Let's set up your studio 🎒</h2>
@@ -435,7 +416,7 @@ button{font-family:inherit;}
     <p class="section-sub">Each one teaches the AI in a different way — choose one to start collecting examples and building!</p>
     <div class="picker">
       <div class="pcard image" data-type="image"><span class="ribbon"></span><span class="emoji">📷</span><h3>Teach with Pictures</h3><p>Show objects, drawings or faces and let the AI learn to recognise them.</p></div>
-      
+      <div class="pcard pose" data-type="pose"><span class="ribbon"></span><span class="emoji">🤸</span><h3>Teach with Poses</h3><p>Strike a pose! The AI learns your body positions using a skeleton.</p></div>
       <div class="pcard sound" data-type="sound"><span class="ribbon"></span><span class="emoji">🔊</span><h3>Teach with Sounds</h3><p>Make sounds or say words and train the AI to listen and tell them apart.</p></div>
     </div>
   </div>
@@ -456,14 +437,22 @@ button{font-family:inherit;}
         <!-- LEFT: input (camera or mic) -->
         <div class="panel">
           <h3><span class="ic" id="input-ic">📷</span> <span id="input-title">Your Camera</span></h3>
-          <!-- camera -->
+          <!-- camera (image/pose) -->
           <div id="cam-wrap">
             <div class="cam-box">
               <video id="video" autoplay playsinline muted></video>
               <canvas class="layer" id="overlay"></canvas>
               <div class="cam-off" id="cam-off"><div class="big">📷</div><div style="font-weight:700">Camera is off</div><div style="font-size:13px;opacity:.8">Tap the button below</div></div>
               <button class="cam-flip hidden" id="cam-flip" title="Flip camera">🔄</button>
-
+              <!-- Pose mode: finger legend & live count badge -->
+              <div class="finger-legend hidden" id="finger-legend">
+                <div class="fl-row"><span class="fl-dot" style="background:#FF4757"></span>Thumb</div>
+                <div class="fl-row"><span class="fl-dot" style="background:#FFA502"></span>Index</div>
+                <div class="fl-row"><span class="fl-dot" style="background:#FFDD57"></span>Middle</div>
+                <div class="fl-row"><span class="fl-dot" style="background:#2ED573"></span>Ring</div>
+                <div class="fl-row"><span class="fl-dot" style="background:#5352ED"></span>Pinky</div>
+              </div>
+              <div class="finger-count-badge hidden" id="finger-count-badge">✋ –</div>
               <!-- Game countdown / announcements -->
               <div class="game-timer hidden" id="game-timer"><i id="game-timer-bar"></i></div>
               <div class="game-overlay hidden" id="game-overlay"><div class="go-big" id="go-big"></div><div class="go-sub" id="go-sub"></div></div>
@@ -506,7 +495,6 @@ button{font-family:inherit;}
                 <div class="gs-head"><b id="gs-name">Game</b><button class="gs-exit" id="gs-exit">✕ Exit</button></div>
                 <div class="game-task" id="gs-body">Press Start!</div>
                 <div class="game-score" id="gs-score"></div>
-                <div id="rps-table-wrap" style="display:none"></div>
                 <div class="game-row"><button class="btn-game" id="btn-game">▶ Start</button></div>
               </div>
             </div>
@@ -537,7 +525,7 @@ button{font-family:inherit;}
           <div class="placeholder" id="aug-ph">Snap a picture in a category, then build your own variations ✨</div>
         </div>
 
-        <!-- Feature map cluster -->
+        <!-- Feature map cluster (image + pose) -->
         <div class="viz" id="viz-cluster" style="position:relative">
           <h4>🗺️ The AI's memory map</h4>
           <p class="why">Every example becomes a dot. The AI groups similar things together. If your dots make tidy colour clumps, it learned well!</p>
@@ -577,19 +565,6 @@ button{font-family:inherit;}
   </footer>
 </div>
 
-<!-- CAMERA REQUIRED POPUP -->
-<div class="cam-req hidden" id="cam-req">
-  <div class="cam-req-box">
-    <div class="ci">📷</div>
-    <h3>Camera needed!</h3>
-    <p>This game uses your camera to detect what you're showing. Please turn on the camera first.</p>
-    <div class="cam-req-btns">
-      <button class="btn-cam-req secondary" onclick="$('cam-req').classList.add('hidden')">Not now</button>
-      <button class="btn-cam-req primary" onclick="$('cam-req').classList.add('hidden');startCamera()">Turn on 📷</button>
-    </div>
-  </div>
-</div>
-
 <!-- END SESSION MODAL -->
 <div class="modal-overlay hidden" id="end-modal">
   <div class="modal-box">
@@ -619,7 +594,7 @@ button{font-family:inherit;}
 <script>
 /* ===========================================================
    AI STUDIO by CognoSpace
-   Images (MobileNet+KNN) · Sounds (Speech Commands transfer)
+   Images (MobileNet+KNN) · Poses (PoseNet+KNN) · Sounds (Speech Commands transfer)
    =========================================================== */
 const LS_SESSION='aistudio_session_v2', LS_DATA='aistudio_data_v3';
 const PALETTE=['#FF7A3D','#37AEE2','#27CE9B','#FFC23C','#9B7BE8','#FF6FA5','#5FD46A','#FF9F5A'];
@@ -631,21 +606,22 @@ function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 
 /* ---------- global state ---------- */
-let projectType=null;            // 'image' | 'sound'
+let projectType=null;            // 'image' | 'pose' | 'sound'
 let mode='learn';
 
-let mobilenetNet=null, speechBase=null;
-let imageKNN=null, soundTransfer=null;
+let mobilenetNet=null, poseNet=null, handModel=null, speechBase=null;
+let imageKNN=null, poseKNN=null, soundTransfer=null;
 
 // per-type state
 const S={
   image:{classes:[],samples:[],built:false,key:''},
+  pose:{classes:[],samples:[],built:false,key:''},
   sound:{classes:[],built:false,history:null}
 };
 // samples item: {label, vec:[...], thumb:dataURL|null}
 
 let stream=null, facing='user', cameraOn=false, micOn=false;
-let predicting=false, rafId=null, audioCtx=null, analyser=null, micRaf=null;
+let predicting=false, rafId=null, poseRafId=null, audioCtx=null, analyser=null, micRaf=null;
 
 /* ===========================================================
    SESSION
@@ -684,10 +660,18 @@ function confirmEndSession(){
 function setStatus(ready,text){$('status-text').textContent=text;$('status-dot').classList.toggle('ready',!!ready);}
 async function warmUp(){
   imageKNN=imageKNN||knnClassifier.create();
+  poseKNN=poseKNN||knnClassifier.create();
   setStatus(true,'AI Studio is ready!');
 }
 async function ensureImageModel(){
   if(!mobilenetNet){setStatus(false,'Waking up the image AI…');mobilenetNet=await mobilenet.load();setStatus(true,'Image AI ready!');}
+}
+async function ensurePoseModel(){
+  if(!poseNet){setStatus(false,'Waking up the body AI…');
+    poseNet=await posenet.load({architecture:'MobileNetV1',outputStride:16,inputResolution:{width:257,height:257},multiplier:0.75});}
+  if(!handModel){setStatus(false,'Waking up the hand AI…');
+    handModel=await handpose.load();}
+  setStatus(true,'Pose + hand AI ready!');
 }
 async function ensureSoundModel(){
   if(!speechBase){setStatus(false,'Waking up the sound AI…');
@@ -706,15 +690,17 @@ function openActivity(type){
   const cam=(type!=='sound');
   $('cam-wrap').classList.toggle('hidden',!cam);
   $('mic-wrap').classList.toggle('hidden',cam);
-  $('input-ic').style.background = type==='image'?'var(--sky)':'var(--mint)';
+  $('input-ic').style.background = type==='image'?'var(--sky)':type==='pose'?'var(--grape)':'var(--mint)';
   $('input-ic').textContent = type==='sound'?'🎤':'📷';
   $('input-title').textContent = type==='sound'?'Your Microphone':'Your Camera';
-  $('in-newclass').placeholder = type==='image'?'New category… e.g. Apple 🍎':'New sound… e.g. Clap 👏';
+  $('in-newclass').placeholder = type==='image'?'New category… e.g. Apple 🍎':type==='pose'?'New pose… e.g. Hands Up 🙌':'New sound… e.g. Clap 👏';
   // visuals visibility
   $('viz-aug').classList.toggle('hidden',type!=='image');
   $('viz-cluster').classList.toggle('hidden',type==='sound');
   $('viz-acc').classList.toggle('hidden',type!=='sound');
-  if(type==='sound')ensureSoundModel(); else ensureImageModel();
+  if(projectType==='pose')ensurePoseModel(); else if(type==='sound')ensureSoundModel(); else ensureImageModel();
+  $('finger-legend').classList.toggle('hidden', type!=='pose');
+  $('finger-count-badge').classList.toggle('hidden', type!=='pose');
   resetAugLab(); resetGameUI();
   switchMode('learn'); renderClasses(); updateCount(); refreshVisuals();
   setHint();
@@ -726,6 +712,7 @@ function setHint(){
   const learn=mode==='learn';
   const map={
     image:['Add categories, snap pictures for each (try different angles!), then build your AI brain.','Show objects to the camera and watch the AI guess! 🎯'],
+    pose:['Add poses, strike each pose and capture it many times, then build your AI brain.','Strike a pose and watch the AI recognise it! 🤸'],
     sound:['Add sounds, record each one several times, then build your sound AI.','Make a sound and watch the AI listen! 🔊']
   };
   $('stage-hint').textContent=map[projectType][learn?0:1];
@@ -741,11 +728,12 @@ async function startCamera(){
     const v=$('video');v.srcObject=stream;await v.play();
     cameraOn=true;$('cam-off').classList.add('hidden');$('cam-flip').classList.remove('hidden');
     $('btn-cam').textContent='⏹ Turn off camera';$('btn-cam').classList.add('on');
+    if(projectType==='pose')startPoseLoop();
     if(mode==='play'&&S[projectType].built&&projectType==='image')startPredict();
   }catch(e){console.error(e);toast('Could not open the camera 📷');}
 }
 function stopCamera(){
-  stopPredict();
+  stopPredict();if(poseRafId)cancelAnimationFrame(poseRafId);
   if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}
   cameraOn=false;$('cam-off').classList.remove('hidden');$('cam-flip').classList.add('hidden');
   $('btn-cam').textContent='📷 Turn on camera';$('btn-cam').classList.remove('on');
@@ -753,8 +741,96 @@ function stopCamera(){
 }
 async function flipCamera(){facing=facing==='user'?'environment':'user';if(cameraOn){stopCamera();await startCamera();}}
 
+/* hand connections per finger (for coloring) */
+const HAND_CONNECTIONS=[[0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[6,7],[7,8],[5,9],[9,10],[10,11],[11,12],[9,13],[13,14],[14,15],[15,16],[13,17],[17,18],[18,19],[19,20],[0,17]];
+// Which connections belong to which finger (for color)
+const FINGER_COLORS=['#FF4757','#FFA502','#FFDD57','#2ED573','#5352ED']; // thumb,index,middle,ring,pinky
+const FINGER_CONN=[[0,1,2,3],[4,5,6,7],[8,9,10,11],[12,13,14,15],[16,17,18,19,20]]; // connection indices per finger
 
 /* ONE loop: detects body + hands, draws BOTH, and (in playtime) classifies */
+let poseBusy=false;
+async function startPoseLoop(){
+  const v=$('video'),o=$('overlay');
+  async function loop(){
+    if(!cameraOn||projectType!=='pose')return;
+    if(!poseBusy&&poseNet&&handModel&&v.videoWidth){
+      poseBusy=true;
+      try{
+        o.width=v.videoWidth;o.height=v.videoHeight;
+        const body=await poseNet.estimateSinglePose(v,{flipHorizontal:false});
+        const hands=await handModel.estimateHands(v,true);
+        const fingerCount=drawBodyAndHands(body,hands,o);
+        // update live badge
+        const badge=$('finger-count-badge');
+        if(hands&&hands.length)badge.textContent=`✋ ${fingerCount}`;
+        else badge.textContent='✋ –';
+        if(mode==='play'&&S.pose.built&&poseKNN.getNumClasses()>0){
+          const vec=poseHandVector(body,hands,v);
+          if(vec){const act=tf.tensor(vec);const res=await poseKNN.predictClass(act,K);act.dispose();renderPrediction(res,null,vec,fingerCount);}
+        }
+      }catch(e){}
+      poseBusy=false;
+    }
+    poseRafId=requestAnimationFrame(loop);
+  }
+  loop();
+}
+function drawBodyAndHands(body,hands,o){
+  const ctx=o.getContext('2d');ctx.clearRect(0,0,o.width,o.height);ctx.lineCap='round';
+  // body skeleton (white with blue shadow for visibility)
+  if(body){
+    const lw=Math.max(4,o.width/160);
+    const adj=posenet.getAdjacentKeyPoints(body.keypoints,0.3);
+    // shadow pass
+    ctx.strokeStyle='rgba(30,80,200,.45)';ctx.lineWidth=lw+3;
+    adj.forEach(([a,b])=>{ctx.beginPath();ctx.moveTo(a.position.x,a.position.y);ctx.lineTo(b.position.x,b.position.y);ctx.stroke();});
+    // main pass
+    ctx.strokeStyle='#5BC8FF';ctx.lineWidth=lw;
+    adj.forEach(([a,b])=>{ctx.beginPath();ctx.moveTo(a.position.x,a.position.y);ctx.lineTo(b.position.x,b.position.y);ctx.stroke();});
+    // joints
+    body.keypoints.forEach(k=>{if(k.score>0.3){
+      ctx.beginPath();ctx.fillStyle='#fff';ctx.arc(k.position.x,k.position.y,Math.max(5,o.width/110),0,7);ctx.fill();
+      ctx.beginPath();ctx.fillStyle='#1e50c8';ctx.arc(k.position.x,k.position.y,Math.max(3,o.width/180),0,7);ctx.fill();
+    }});
+  }
+  // hands — each finger its own bright color
+  let fingerCount=0;
+  (hands||[]).forEach(h=>{
+    const lm=h.landmarks; // 21 × [x,y,z]
+    const lw=Math.max(3,o.width/200);
+    // Draw each connection colored by finger
+    HAND_CONNECTIONS.forEach(([a,b],connIdx)=>{
+      let fIdx=4; // default pinky colour
+      if(connIdx<=3) fIdx=0;       // thumb: connections 0-3
+      else if(connIdx<=7) fIdx=1;  // index: 4-7
+      else if(connIdx<=11) fIdx=2; // middle: 8-11
+      else if(connIdx<=15) fIdx=3; // ring: 12-15
+      else fIdx=4;                 // pinky: 16-20
+      ctx.beginPath();ctx.strokeStyle=FINGER_COLORS[fIdx];ctx.lineWidth=lw+1;
+      ctx.moveTo(lm[a][0],lm[a][1]);ctx.lineTo(lm[b][0],lm[b][1]);ctx.stroke();
+    });
+    // joints — large bright circles
+    lm.forEach((p,pi)=>{
+      let fIdx=pi<=4?0:pi<=8?1:pi<=12?2:pi<=16?3:4;
+      ctx.beginPath();ctx.fillStyle='#fff';ctx.arc(p[0],p[1],Math.max(4,o.width/170),0,7);ctx.fill();
+      ctx.beginPath();ctx.fillStyle=FINGER_COLORS[fIdx];ctx.arc(p[0],p[1],Math.max(2.5,o.width/240),0,7);ctx.fill();
+    });
+    fingerCount=detectFingerCount(h);
+  });
+  return fingerCount;
+}
+function detectFingerCount(hand){
+  if(!hand)return 0;
+  const lm=hand.landmarks;
+  // Fingertip pip pairs: [tip, pip] - if tip y < pip y (higher up), finger is extended
+  const pairs=[[8,6],[12,10],[16,14],[20,18]]; // index,middle,ring,pinky
+  let count=0;
+  pairs.forEach(([tip,pip])=>{if(lm[tip][1]<lm[pip][1])count++;});
+  // Thumb: tip x sufficiently away from thumb ip
+  const tx=Math.abs(lm[4][0]-lm[3][0]);const ty=Math.abs(lm[4][1]-lm[3][1]);
+  if(Math.sqrt(tx*tx+ty*ty)>20)count++;
+  return count;
+}
 
 /* grab a 224 square frame, optional augmentation */
 function grabFrame(aug){
@@ -817,6 +893,7 @@ function delClass(id){
   st.samples=(st.samples||[]).filter(s=>s.label!==id);
   st.built=false;st.key='';
   if(projectType==='image'){rebuildKNN(imageKNN,st);}
+  if(projectType==='pose'){rebuildKNN(poseKNN,st);}
   renderClasses();updateCount();refreshVisuals();refreshPlayState();
 }
 function rebuildKNN(knn,st){knn.clearAllClasses();st.samples.forEach(s=>{const t=tf.tensor(s.vec);knn.addExample(t,s.label);t.dispose();});}
@@ -830,6 +907,15 @@ async function capture(id){
     lastSnap={classId:id, base:f, done:{}};
     setupAugLab(f);                    // let the student build variations themselves
     toast('📸 Snap added! Now make your own variations below 👇');
+  }else if(projectType==='pose'){
+    if(!cameraOn)return toast('Turn on the camera first 📷');await ensurePoseModel();
+    const v=$('video');
+    const body=await poseNet.estimateSinglePose(v,{flipHorizontal:false});
+    const hands=await handModel.estimateHands(v,true);
+    const vec=poseHandVector(body,hands,v);if(!vec)return toast('Step into view so I can see you 🙂');
+    poseKNN.addExample(tf.tensor(vec),id);
+    const thumb=cls.thumbs.length<MAX_THUMBS?snapPoseThumb(v):null;if(thumb)cls.thumbs.push(thumb);
+    st.samples.push({label:id,vec,thumb});cls.count++;
   }else if(projectType==='sound'){
     return toast('Use the 🎙 Record button on each sound card!');
   }
@@ -887,6 +973,19 @@ function addAug(kind){
     toast(`🌟 Brilliant! "${cls?cls.name:''}" now has 4 versions from one snap!`);
 }
 /* 76-dim vector: 17 body keypoints (×2) + first hand's 21 landmarks (×2), zero-filled if no hand */
+function poseHandVector(body,hands,v){
+  if(!body||body.score<0.15)return null;
+  const w=v.videoWidth||1,h=v.videoHeight||1;
+  const bodyVec=body.keypoints.flatMap(k=>[k.position.x/w,k.position.y/h]); // 34
+  let handVec=new Array(42).fill(0); // 21×2
+  if(hands&&hands.length){const lm=hands[0].landmarks;handVec=lm.flatMap(p=>[p[0]/w,p[1]/h]);}
+  return bodyVec.concat(handVec); // 76
+}
+function snapPoseThumb(v){
+  const c=document.createElement('canvas');c.width=64;c.height=64;const ctx=c.getContext('2d');
+  const vw=v.videoWidth||4,vh=v.videoHeight||3,side=Math.min(vw,vh);
+  ctx.drawImage(v,(vw-side)/2,(vh-side)/2,side,side,0,0,64,64);return c.toDataURL('image/jpeg',.5);
+}
 
 /* sound: record one example (~1s) for a class */
 async function recordSound(id){
@@ -905,17 +1004,24 @@ function renderClasses(){
     list.innerHTML='<div class="empty-classes"><span class="em">🏷️</span>No categories yet!<br>Add at least <b>2</b> to teach your AI.</div>';
     $('btn-build').disabled=true;return;
   }
-  const capLabel=projectType==='sound'?'🎙 Record sound':'📸 Add picture';
+  const capLabel=projectType==='sound'?'🎙 Record sound':projectType==='pose'?'🤸 Capture pose':'📸 Add picture';
   const imageFeats=['🔴 Red','🟠 Orange','🟡 Yellow','🟢 Green','🔵 Blue','⬜ White','⬛ Dark','🔵 Round','▭ Flat','📦 Box-like','🌿 Nature','📍 Small','📐 Big'];
+  const poseFeats=['🙌 Both arms up','💪 One arm up','🤗 Arms spread','🚶 Standing','🙏 Hands together','↩ Arms down','🤌 Hand gesture'];
   const soundFeats=['🔊 Loud','🔈 Soft','🎵 Musical note','📢 Shout','👏 Percussive','🗣️ Voice','🐦 High pitch','🐋 Low pitch','⏱️ Short','⏳ Long'];
-  const feats=projectType==='image'?imageFeats:soundFeats;
+  const feats=projectType==='image'?imageFeats:projectType==='pose'?poseFeats:soundFeats;
 
   list.innerHTML=cl.map(c=>{
     const r=getOrInitRules(c.id);
     const thresh=r.threshold||65;
     const fcs=r.features||[];
     let recipeExtras='';
-
+    if(projectType==='pose'){
+      const fc=r.fingerCount;
+      recipeExtras=`<div class="recipe-row"><label>🖐 Expected finger count (optional):</label><div class="fcount-row">
+        ${[0,1,2,3,4,5].map(n=>`<button class="fcount-btn ${fc===n?'on':''}" onclick="setFingerCount('${c.id}',${n})">${n}</button>`).join('')}
+        <button class="fcount-btn ${fc===null?'on':''}" style="${fc===null?'background:var(--grape);color:#fff':''}" onclick="setFingerCount('${c.id}',null)">Any</button>
+      </div></div>`;
+    }
     return `
     <div class="class-card">
       <div class="class-head"><span class="class-swatch" style="background:${c.color}"></span>
@@ -987,7 +1093,9 @@ function showProcess(res,probe,detectedFingerCount){
   const votes={};scored.forEach(n=>{votes[n.label]=(votes[n.label]||0)+1;});
   const rules=win?getOrInitRules(win.id):null;
   const thresh=rules?rules.threshold:65;const passes=conf>=thresh;
-  const vecLen=probe?probe.length:(projectType==='image'?1024:'–');
+  const hasFinger=projectType==='pose'&&rules&&rules.fingerCount!==null&&detectedFingerCount!==undefined;
+  const fingerPass=hasFinger&&detectedFingerCount===rules.fingerCount;
+  const vecLen=probe?probe.length:(projectType==='image'?1024:projectType==='pose'?76:'–');
 
   let h=`<div class="proc-title">🔍 What just happened inside the AI?</div>`;
   h+=`<div class="proc-step"><span class="proc-num">1</span><div class="proc-text">Your input was turned into <em>${vecLen} numbers</em> (its unique fingerprint)</div></div>`;
@@ -1005,7 +1113,8 @@ function showProcess(res,probe,detectedFingerCount){
       if(rules.description)h+=`<div class="proc-rule-row">📝 Your recipe: "<em>${esc(rules.description)}</em>"</div>`;
       if(rules.features&&rules.features.length)h+=`<div class="proc-rule-row">🏷️ Features you picked: ${rules.features.map(f=>`<span class="feat-tag">${f}</span>`).join('')}</div>`;
       h+=`<div class="proc-rule-row">${passes?'✅':'⚠️'} Confidence <em>${conf}%</em> vs your threshold <em>${thresh}%</em> → <b>${passes?'DETECTED! 🎉':'NOT CONFIDENT ENOUGH'}</b></div>`;
-          h+=`</div>`;
+      if(hasFinger)h+=`<div class="proc-rule-row">${fingerPass?'✅':'❌'} Finger rule: you said <em>${rules.fingerCount}</em> finger${rules.fingerCount!==1?'s':''}, AI sees <em>${detectedFingerCount}</em></div>`;
+      h+=`</div>`;
     }
   }else{h+=`<div class="proc-step"><span class="proc-num">5</span><div class="proc-text">No clear winner — try again!</div></div>`;}
   panel.innerHTML=h;
@@ -1017,6 +1126,7 @@ function showProcess(res,probe,detectedFingerCount){
 /* Step-by-step narration of what's REALLY happening, per project type */
 const BUILD_STEPS={
   image:[['👀','Looking at every picture you took'],['🔢','Turning each picture into 1024 numbers (a "fingerprint")'],['📦','Memorising all the fingerprints by category'],['🗳️','Getting ready to compare & vote'],['✅','Done — no guessing, just matching!']],
+  pose:[['👀','Finding your body points and finger joints'],['🔢','Turning each pose into 76 numbers (body + fingers)'],['📦','Memorising every pose fingerprint'],['🗳️','Getting ready to compare & vote'],['✅','Done — it remembers your poses!']],
   sound:[['👂','Turning each sound into a frequency picture (spectrogram)'],['🧠','Building a small neural network'],['🔁','Practising over and over (epochs)'],['📉','Checking mistakes and adjusting'],['📈','Watching the score climb!']]
 };
 function neuronGrid(){const g=$('neurons');g.innerHTML='';for(let i=0;i<24;i++)g.appendChild(document.createElement('i'));}
@@ -1153,6 +1263,7 @@ function refreshPlayState(){
     if(!G.id)renderGameMenu();
     if(projectType==='sound')startSoundListen();
     else if(projectType==='image'&&cameraOn)startPredict();
+    // pose prediction runs inside the unified poseLoop (started with the camera)
   }
 }
 function startPredict(){if(predicting||!cameraOn)return;predicting=true;predictLoop();}
@@ -1169,7 +1280,7 @@ async function predictLoop(){
   rafId=requestAnimationFrame(()=>setTimeout(predictLoop,170));
 }
 let lastWinner=null;
-function renderPrediction(res,frame,vec){
+function renderPrediction(res,frame,vec,fingerCount){
   const st=S[projectType];const win=st.classes.find(c=>c.id===res.label);
   const conf=Math.round((res.confidences[res.label]||0)*100);
   lastWinner=win?win.name:null;
@@ -1180,7 +1291,7 @@ function renderPrediction(res,frame,vec){
   let probe=vec;
   if(!probe&&frame&&mobilenetNet){const t=mobilenetNet.infer(frame,true);probe=Array.from(t.dataSync());t.dispose();}
   if(probe&&projectType!=='sound')showClosest(probe);
-  showProcess(res,probe);
+  showProcess(res,probe,fingerCount);
   livePred={id:res.label||null,conf,t:performance.now()};
   if(G.running)gameTick();
 }
@@ -1216,23 +1327,20 @@ function startSoundListen(){
 /* ===========================================================
    PLAYTIME GAMES — multiple selectable games
    =========================================================== */
-const GC=38; // confidence threshold — forgiving enough for real classroom use
+const GC=55; // confidence needed for a correct move in games
 let livePred={id:null,conf:0,t:0};
 const GAMES=[
-  {id:'showdown', name:'🥊 RPS Showdown',    desc:'Rock · Paper · Scissors — beat the computer! Best of 5.', modes:['image'], cam:true},
-  {id:'flash',    name:'⚡ Quick Flash',     desc:'Show the called category before the timer runs out!',    modes:['image'], cam:true},
-  {id:'simon',    name:'🧠 Simon Says',      desc:'Watch the sequence, then repeat it from memory!',        modes:['image'], cam:true},
-  {id:'clock',    name:'⏱️ Beat the Clock',  desc:'How many can you get right in 30 seconds?',              modes:['image'], cam:true},
-  {id:'hold',     name:'🎯 Hold Steady',     desc:'Lock on your target and hold it for 3 solid seconds!',   modes:['image'], cam:true},
-  {id:'streak',   name:'🔥 Hot Streak',      desc:'Get 5 in a row without a single mistake. Can you do it?', modes:['image'], cam:true},
-  {id:'survivor', name:'💀 Survivor',        desc:'3 lives only — wrong answer loses one. How far can you go?', modes:['image'], cam:true},
-  {id:'blitz',    name:'⚡ Blitz',           desc:'10 rounds, only 2 seconds each. Ultra fast!',            modes:['image'], cam:true},
+  {id:'flash',   name:'⚡ Quick Flash',  desc:'Show the called category before the timer runs out!', modes:['image','pose','sound']},
+  {id:'showdown',name:'🥊 Showdown',     desc:'Rock-Paper-Scissors style face-off vs the computer!', modes:['image','pose']},
+  {id:'simon',   name:'🧠 Simon Says',   desc:'Watch the sequence, then repeat it from memory!', modes:['image','pose','sound']},
+  {id:'clock',   name:'⏱️ Beat the Clock',desc:'How many can you get right in 30 seconds?', modes:['image','pose','sound']},
+  {id:'hold',    name:'🎯 Hold Steady',  desc:'Hold the pose/picture steady for 3 seconds!', modes:['image','pose']},
 ];
 let G={id:null,running:false,busy:false,score:0,cpuScore:0,streak:0,target:null,
        round:0,maxRound:5,cpuMove:null,seq:[],seqPos:0,holdMs:0,deadline:0,timers:[],raf:null};
 
 function classById(id){return curClasses().find(c=>c.id===id)||{name:'?',color:'#888'};}
-function getLive(){return (performance.now()-livePred.t<4000)?livePred:{id:null,conf:0};}
+function getLive(){return (performance.now()-livePred.t<800)?livePred:{id:null,conf:0};}
 function later(fn,ms){const t=setTimeout(fn,ms);G.timers.push(t);return t;}
 function clearGameTimers(){G.timers.forEach(clearTimeout);G.timers=[];if(G.raf){cancelAnimationFrame(G.raf);G.raf=null;}}
 
@@ -1249,14 +1357,8 @@ function gameTimerBar(frac){const t=$('game-timer');if(frac==null){t.classList.a
 /* menu / stage management */
 function renderGameMenu(){
   const menu=$('game-menu');if(!menu)return;
-  const newGames=['streak','survivor','blitz'];
-  const avail=GAMES.filter(g=>g.modes.includes(projectType));
-  if(!avail.length){
-    menu.innerHTML=`<div class="play-empty" style="grid-column:1/-1"><span class="em">🎮</span>Games are available in <b>Image</b> mode!<br>This sound model still works great for live recognition above. 🔊</div>`;
-    return;
-  }
-  menu.innerHTML=avail.map(g=>
-    `<button class="game-btn" data-game="${g.id}"><b>${g.name}${newGames.includes(g.id)?'<span class="badge-new">NEW</span>':''}</b><span>${g.desc}</span></button>`).join('');
+  menu.innerHTML=GAMES.filter(g=>g.modes.includes(projectType)).map(g=>
+    `<button class="game-btn" data-game="${g.id}"><b>${g.name}</b><span>${g.desc}</span></button>`).join('');
   menu.querySelectorAll('.game-btn').forEach(b=>b.onclick=()=>selectGame(b.dataset.game));
 }
 function resetGameUI(){
@@ -1264,7 +1366,6 @@ function resetGameUI(){
   const st=$('game-stage');if(st)st.classList.add('hidden');
   const m=$('game-menu');if(m)m.classList.remove('hidden');
   const h=$('game-hint');if(h)h.classList.remove('hidden');
-  const tw=$('rps-table-wrap');if(tw){tw.style.display='none';tw.innerHTML='';}
   renderGameMenu();
 }
 function selectGame(id){
@@ -1275,51 +1376,33 @@ function selectGame(id){
   $('gs-name').textContent=meta.name;
   $('gs-body').textContent=meta.desc;
   $('gs-score').textContent='';
-  const tw=$('rps-table-wrap');if(tw){tw.style.display='none';tw.innerHTML='';}
   $('btn-game').textContent='▶ Start';
-  G.rounds=[];// reset round history for RPS
 }
 function exitGame(){stopGame();resetGameUI();}
 function stopGame(){G.running=false;G.busy=false;clearGameTimers();if(window.speechSynthesis)try{speechSynthesis.cancel();}catch(e){}hideGameOverlay();gameTimerBar(null);}
-function startSelectedGame(){
-  const fns={flash:startFlash,showdown:startShowdown,simon:startSimon,clock:startClock,
-              hold:startHold,streak:startStreak,survivor:startSurvivor,blitz:startBlitz,
-              soundsprint:startSoundSprint,soundchain:startSoundChain};
-  (fns[G.id]||function(){})();
-}
-
-$('btn-game').onclick=()=>{
-  if(!G.id)return;
-  const meta=GAMES.find(g=>g.id===G.id);
-  if(meta&&meta.cam&&!cameraOn){$('cam-req').classList.remove('hidden');return;}
-  if(G.running){stopGame();$('btn-game').textContent='▶ Start';$('gs-body').textContent='Stopped. Press Start to play again!';return;}
-  startSelectedGame();
-};
-$('gs-exit').onclick=exitGame;
-
-/* ====== GAME UTILITIES ====== */
+function startSelectedGame(){({flash:startFlash,showdown:startShowdown,simon:startSimon,clock:startClock,hold:startHold}[G.id]||(()=>{}))();}
 function updateGameScore(){
   if(G.id==='showdown')$('gs-score').textContent=`You ${G.score} · ${G.cpuScore} CPU`;
-  else $('gs-score').textContent='Score: '+G.score;
+  else if(G.id!=='clock')$('gs-score').textContent='Score: '+G.score;
 }
 function pickTarget(){
   const cl=curClasses();const t=cl[Math.floor(Math.random()*cl.length)];G.target=t.id;
-  const verb=projectType==='sound'?'Make the sound':'Show me';
-  $('gs-body').innerHTML=`${verb}: <b style="color:${t.color}">${esc(t.name)}</b>`;
-  gameSpeak(t.name);
+  const verb=projectType==='sound'?'Make the sound':projectType==='pose'?'Strike the pose':'Show me';
+  $('gs-body').innerHTML=`${verb}: <b style="color:${t.color}">${esc(t.name)}</b>!`;
+  gameSpeak(verb+' '+t.name);
 }
 
-/* ====== QUICK FLASH ====== */
+/* ---- Quick Flash ---- */
 function startFlash(){G.running=true;G.score=0;G.streak=0;$('btn-game').textContent='⏹ Stop';updateGameScore();nextFlash();flashTimer();}
 function nextFlash(){if(!G.running)return;G.busy=false;G.deadline=performance.now()+4200;pickTarget();}
 function flashTimer(){
   if(!G.running||G.id!=='flash')return;
   const left=G.deadline-performance.now();gameTimerBar(left/4200);
-  if(left<=0&&!G.busy){G.busy=true;G.streak=0;toast('⏱ Too slow!');later(nextFlash,400);}
+  if(left<=0&&!G.busy){G.busy=true;G.streak=0;toast('⏱ Too slow!');later(nextFlash,350);}
   G.raf=requestAnimationFrame(flashTimer);
 }
 
-/* ====== BEAT THE CLOCK ====== */
+/* ---- Beat the Clock ---- */
 function startClock(){G.running=true;G.score=0;G.busy=false;$('btn-game').textContent='⏹ Stop';G.deadline=performance.now()+30000;pickTarget();clockTimer();}
 function clockTimer(){
   if(!G.running||G.id!=='clock')return;
@@ -1329,7 +1412,7 @@ function clockTimer(){
   G.raf=requestAnimationFrame(clockTimer);
 }
 
-/* ====== HOLD STEADY ====== */
+/* ---- Hold Steady ---- */
 function startHold(){G.running=true;G.score=0;G.holdMs=0;$('btn-game').textContent='⏹ Stop';updateGameScore();pickTarget();G.raf=requestAnimationFrame(()=>holdLoop(performance.now()));}
 function holdLoop(prev){
   if(!G.running||G.id!=='hold')return;
@@ -1340,7 +1423,7 @@ function holdLoop(prev){
   G.raf=requestAnimationFrame(()=>holdLoop(now));
 }
 
-/* ====== SIMON SAYS ====== */
+/* ---- Simon Says ---- */
 function startSimon(){G.running=true;G.score=0;G.seq=[];G.seqPos=0;$('btn-game').textContent='⏹ Stop';updateGameScore();simonNextRound();}
 function simonNextRound(){
   if(!G.running)return;
@@ -1350,37 +1433,33 @@ function simonNextRound(){
 function playSimonSeq(i){
   if(!G.running)return;
   if(i>=G.seq.length){G.busy=false;gameOverlay('GO!','Your turn — repeat it!','win');later(hideGameOverlay,750);
-    $('gs-body').innerHTML=`Your turn! Repeat <b>${G.seq.length}</b> step${G.seq.length>1?'s':''} in order.`;return;}
+    $('gs-body').innerHTML=`Your turn! Repeat the <b>${G.seq.length}</b> step${G.seq.length>1?'s':''} in order.`;return;}
   const t=classById(G.seq[i]);
   gameOverlay(String(i+1),t.name,'');gameSpeak(t.name);beep(523+i*40,.12);
-  $('gs-body').innerHTML=`Step ${i+1}/${G.seq.length}: <b style="color:${t.color}">${esc(t.name)}</b>`;
+  $('gs-body').innerHTML=`Step ${i+1} of ${G.seq.length}: <b style="color:${t.color}">${esc(t.name)}</b>`;
   later(()=>{hideGameOverlay();later(()=>playSimonSeq(i+1),360);},900);
 }
 
-/* ====== SHOWDOWN — Rock · Paper · Scissors · Shoot! ====== */
+/* ---- Showdown — Rock · Paper · Scissors · Shoot! ---- */
 function isRPS(){const n=curClasses().map(c=>c.name.toLowerCase());return ['rock','paper','scissor'].every(k=>n.some(x=>x.includes(k)));}
 function rpsKind(id){const n=(classById(id)||{}).name||'';const l=n.toLowerCase();if(l.includes('rock'))return 'rock';if(l.includes('paper'))return 'paper';if(l.includes('scissor'))return 'scissors';return null;}
 function rpsEmoji(kind){return {rock:'✊',paper:'✋',scissors:'✌️'}[kind]||'❓';}
 function judge(userId,cpuId){
-  if(!userId)return 'none';if(userId===cpuId)return 'draw';
+  if(!userId)return 'none';
+  if(userId===cpuId)return 'draw';
   const u=rpsKind(userId),c=rpsKind(cpuId);
-  if(u&&c){if((u==='rock'&&c==='scissors')||(u==='scissors'&&c==='paper')||(u==='paper'&&c==='rock'))return 'win';return 'lose';}
+  // Strict RPS rules:  Rock beats Scissors | Scissors beats Paper | Paper beats Rock
+  if(u&&c){
+    if((u==='rock'&&c==='scissors')||(u==='scissors'&&c==='paper')||(u==='paper'&&c==='rock'))return 'win';
+    return 'lose';
+  }
+  // Non-RPS: mirror match — show same class as CPU to win
   return 'lose';
 }
-function renderRPSTable(){
-  const tw=$('rps-table-wrap');if(!tw)return;tw.style.display='block';
-  const rows=G.rounds.map((r,i)=>{
-    const cls=r.result==='win'?'td-win':r.result==='lose'?'td-lose':'td-draw';
-    const label=r.result==='win'?'🎉 You':r.result==='lose'?'🤖 CPU':r.result==='draw'?'🤝 Draw':'—';
-    return `<tr><td>${i+1}</td><td>${r.cpuEmoji} ${r.cpuName}</td><td>${r.userEmoji} ${r.userName}</td><td class="${cls}">${label}</td></tr>`;
-  }).join('');
-  tw.innerHTML=`<table class="rps-table"><thead><tr><th>Round</th><th>CPU</th><th>You</th><th>Result</th></tr></thead><tbody>${rows}</tbody></table>`;
-}
 function startShowdown(){
-  G.running=true;G.score=0;G.cpuScore=0;G.round=0;G.maxRound=5;G.rounds=[];
+  G.running=true;G.score=0;G.cpuScore=0;G.round=0;G.maxRound=5;
   $('btn-game').textContent='⏹ Stop';$('gs-score').textContent='You 0 · 0 CPU';
   $('gs-body').innerHTML='Best of 5 — get ready! 🤜🤛';
-  const tw=$('rps-table-wrap');if(tw){tw.innerHTML='';tw.style.display='none';}
   later(showdownRound,800);
 }
 function showdownRound(){
@@ -1388,180 +1467,102 @@ function showdownRound(){
   G.round++;if(G.round>G.maxRound)return showdownEnd();
   G.busy=true;
   $('gs-body').innerHTML=`Round <b>${G.round}</b> of ${G.maxRound}`;
-  const nb=document.getElementById('rps-next-btn');if(nb)nb.remove();
-  const cl=curClasses();G.cpuMove=cl[Math.floor(Math.random()*cl.length)].id;
+
+  // Pick CPU move now but keep hidden until SHOOT
+  const cl=curClasses();
+  G.cpuMove=cl[Math.floor(Math.random()*cl.length)].id;
+
+  // Chant: Rock (t=0) · Paper (t=650) · Scissors (t=1300) · SHOOT! (t=1950)
   const chant=[
-    {t:0,   word:'✊', sub:'Rock…',      freq:440},
-    {t:700, word:'✋', sub:'Paper…',     freq:494},
-    {t:1400,word:'✌️',sub:'Scissors…',  freq:523},
-    {t:2100,word:'💥', sub:'SHOOT!',    freq:660, shoot:true},
+    {t:0,   word:'✊',  sub:'Rock…',      freq:440},
+    {t:700, word:'✋',  sub:'Paper…',     freq:494},
+    {t:1400,word:'✌️', sub:'Scissors…',  freq:523},
+    {t:2100,word:'💥 SHOOT!', sub:'Show your move!', freq:660, shoot:true},
   ];
   chant.forEach(({t,word,sub,freq,shoot})=>{
     later(()=>{
       gameOverlay(word,sub,'');beep(freq,.14);
       if(shoot){
-        // First flash "SHOOT!", then reveal the CPU's move as a BIG emoji
-        const cpuC=classById(G.cpuMove);const kind=rpsKind(G.cpuMove);const em=kind?rpsEmoji(kind):'❓';
-        later(()=>{
-          if(!G.running)return;
-          beep(740,.18);
-          $('go-big').innerHTML=`<span style="font-size:80px">${em}</span>`;
-          $('go-sub').innerHTML=`CPU plays <b>${esc(cpuC.name)}</b> — show yours!`;
-        },450);
+        // CPU move is already picked (G.cpuMove) — keep it hidden until reveal
         showdownTimer();
       }
     },t);
   });
+  // TTS fires the full chant right at the start
   gameSpeak('Rock… Paper… Scissors… Shoot!');
 }
+
 let _sdTimerStart=0;
 function showdownTimer(){
   _sdTimerStart=performance.now();
-  G.bestPred={id:null,conf:0}; // track best seen during this window
   function tick(){
     if(!G.running||G.id!=='showdown')return;
-    const now=performance.now();
-    const frac=1-((now-_sdTimerStart)/2500);
+    const frac=1-((performance.now()-_sdTimerStart)/2500);
     gameTimerBar(Math.max(0,frac));
-    // keep updating best prediction seen during this window
-    if(livePred.id&&livePred.conf>G.bestPred.conf&&(now-livePred.t<3000)){
-      G.bestPred={id:livePred.id,conf:livePred.conf};
-    }
     if(frac<=0){showdownReveal();return;}
     G.raf=requestAnimationFrame(tick);
   }
   G.raf=requestAnimationFrame(tick);
 }
 function showdownReveal(){
-  if(!G.running)return;G.busy=false;gameTimerBar(null);
-  const cpuC=classById(G.cpuMove);const kind=rpsKind(G.cpuMove);const em=kind?rpsEmoji(kind):'❓';
-  // use best prediction seen during the 2.5s window (most confident reading)
-  const best=G.bestPred||{id:null,conf:0};
-  const userC=best.id?classById(best.id):null;
-  const result=judge(userC?best.id:null,G.cpuMove);
-  const uk=userC?rpsKind(best.id):null;const ue=uk?rpsEmoji(uk):'❓';
-  let resultLabel='',cls='';
-  if(!userC){resultLabel='❓ Missed';}
-  else if(result==='win'){G.score++;resultLabel='🎉 You win!';cls='win';}
-  else if(result==='lose'){G.cpuScore++;resultLabel='🤖 CPU wins';cls='lose';}
-  else{resultLabel='🤝 Draw';}
-  G.rounds.push({round:G.round,cpuEmoji:em,cpuName:esc(cpuC.name),userEmoji:userC?ue:'❓',userName:userC?esc(userC.name):'No move',result});
-  renderRPSTable();updateGameScore();
-  // Show the result ON THE CAMERA and KEEP it there (no auto-hide) — both moves big
-  gameOverlay(resultLabel,`${userC?ue+' '+esc(userC.name):'No move'}  vs  ${em} ${esc(cpuC.name)}`,cls);
-  $('gs-body').innerHTML=`<b style="color:${cls==='win'?'#1A6643':cls==='lose'?'#CC2233':'#555'}">${resultLabel}</b>`;
-  // Offer Next Round (or finish). Clicking clears the on-cam result.
-  if(G.round>=G.maxRound){later(showdownEnd,1500);return;}
-  const tw=$('rps-table-wrap');if(tw&&tw.parentNode){
-    const old=document.getElementById('rps-next-btn');if(old)old.remove();
-    const btn=document.createElement('button');btn.className='rps-next-btn';btn.id='rps-next-btn';
-    btn.innerHTML=`▶ Next Round (${G.round+1}/${G.maxRound})`;
-    btn.onclick=()=>{btn.remove();hideGameOverlay();showdownRound();};
-    tw.parentNode.insertBefore(btn,tw.nextSibling);
+  if(!G.running)return;
+  G.busy=false;gameTimerBar(null);
+  const cpuC=classById(G.cpuMove);
+  const kind=rpsKind(G.cpuMove);const em=kind?rpsEmoji(kind):'';
+  const lp=getLive();
+  const userC=lp.id&&lp.conf>=GC?classById(lp.id):null;
+  const result=judge(userC?lp.id:null,G.cpuMove);
+  const uk=userC?rpsKind(lp.id):null;const ue=uk?rpsEmoji(uk):'';
+  let big,cls='',detail;
+  if(!userC){
+    big='🤔 Missed!';
+    detail=`Couldn't detect your move  •  CPU had: ${em} ${esc(cpuC.name)}`;
+  }else if(result==='win'){
+    G.score++;big='🎉 YOU WIN!';cls='win';
+    detail=`You: ${ue} ${esc(userC.name)}  •  CPU: ${em} ${esc(cpuC.name)}`;
+  }else if(result==='lose'){
+    G.cpuScore++;big='🤖 CPU WINS';cls='lose';
+    detail=`You: ${ue} ${esc(userC.name)}  •  CPU: ${em} ${esc(cpuC.name)}`;
+  }else{
+    big='🤝 DRAW';
+    detail=`You: ${ue} ${esc(userC.name)}  •  CPU: ${em} ${esc(cpuC.name)}`;
   }
+  gameOverlay(big,detail,cls);
+  $('gs-body').innerHTML=detail;
+  updateGameScore();
+  later(()=>{hideGameOverlay();later(showdownRound,500);},2400);
 }
 function showdownEnd(){
-  G.running=false;gameTimerBar(null);
+  G.running=false;
   const win=G.score>G.cpuScore,draw=G.score===G.cpuScore;
-  const big=win?'🏆 You win!':draw?'🤝 Tie!':'🤖 CPU wins!';
+  const big=win?'🏆 You win the match!':draw?'🤝 It\'s a tie!':'🤖 CPU wins!';
   gameOverlay(big,`Final: You ${G.score} · ${G.cpuScore} CPU`,win?'win':draw?'':'lose');
   $('gs-score').textContent=`Final: You ${G.score} · ${G.cpuScore} CPU`;
-  $('gs-body').innerHTML=`<b>${big}</b> — Final: You ${G.score} · ${G.cpuScore} CPU`;
-  $('btn-game').textContent='▶ Play again';later(hideGameOverlay,3000);
+  $('btn-game').textContent='▶ Play again';
+  later(hideGameOverlay,3000);
 }
 
-/* ====== HOT STREAK — 5 in a row ====== */
-function startStreak(){G.running=true;G.score=0;G.streak=0;$('btn-game').textContent='⏹ Stop';updateStreak();pickTarget();}
-function updateStreak(){$('gs-score').innerHTML=`Streak: <b>${G.streak}/5</b> ${'🔥'.repeat(G.streak)}`;}
-
-/* ====== SURVIVOR — 3 lives ====== */
-function startSurvivor(){G.running=true;G.score=0;G.lives=3;G.busy=false;$('btn-game').textContent='⏹ Stop';updateLives();pickTarget();}
-function updateLives(){$('gs-score').innerHTML=`Lives: ${'❤️'.repeat(G.lives)}${'🖤'.repeat(3-G.lives)}  Score: ${G.score}`;}
-
-/* ====== BLITZ — 10 rounds × 2s ====== */
-function startBlitz(){G.running=true;G.score=0;G.round=0;G.maxRound=10;G.busy=false;$('btn-game').textContent='⏹ Stop';$('gs-score').textContent='0/10';blitzRound();}
-function blitzRound(){if(!G.running)return;G.round++;if(G.round>G.maxRound)return blitzEnd();G.busy=false;G.deadline=performance.now()+2000;pickTarget();blitzTimer();}
-function blitzTimer(){
-  if(!G.running||G.id!=='blitz')return;
-  const left=G.deadline-performance.now();gameTimerBar(left/2000);
-  if(left<=0&&!G.busy){G.busy=true;toast('⏱ Missed!');gameTimerBar(null);later(blitzRound,450);return;}
-  G.raf=requestAnimationFrame(blitzTimer);
-}
-function blitzEnd(){G.running=false;gameTimerBar(null);gameOverlay('⏰ Done!',`Score: ${G.score}/10`,'win');$('btn-game').textContent='▶ Play again';later(hideGameOverlay,2500);}
-
-/* ====== SOUND SPRINT — all sounds as fast as possible ====== */
-function startSoundSprint(){
-  G.running=true;G.sprintList=[...curClasses()].map(c=>c.id);G.sprintIdx=0;G.sprintStart=performance.now();
-  $('btn-game').textContent='⏹ Stop';showSprintTarget();
-}
-function showSprintTarget(){
-  if(!G.running)return;
-  if(G.sprintIdx>=G.sprintList.length){
-    const s=((performance.now()-G.sprintStart)/1000).toFixed(1);G.running=false;
-    gameOverlay('🎤 Done!',`${G.sprintList.length} sounds in ${s}s!`,'win');
-    $('gs-score').textContent=`Completed in ${s}s!`;$('btn-game').textContent='▶ Play again';later(hideGameOverlay,2800);return;
-  }
-  const t=classById(G.sprintList[G.sprintIdx]);
-  $('gs-body').innerHTML=`${G.sprintIdx+1}/${G.sprintList.length} — Make: <b style="color:${t.color}">${esc(t.name)}</b>`;
-  $('gs-score').textContent=`${G.sprintIdx} done`;gameSpeak(t.name);
-}
-
-/* ====== SOUND CHAIN — growing sequence ====== */
-function startSoundChain(){G.running=true;G.score=0;G.seq=[];G.chainPos=0;$('btn-game').textContent='⏹ Stop';$('gs-score').textContent='';soundChainAdd();}
-function soundChainAdd(){
-  if(!G.running)return;const cl=curClasses();
-  G.seq.push(cl[Math.floor(Math.random()*cl.length)].id);G.chainPos=0;G.busy=true;
-  $('gs-body').textContent=`👀 Listen… (${G.seq.length} sounds)`;playSoundChainSeq(0);
-}
-function playSoundChainSeq(i){
-  if(!G.running)return;
-  if(i>=G.seq.length){G.busy=false;$('gs-body').innerHTML=`🎤 Your turn! Repeat <b>${G.seq.length}</b> sound${G.seq.length>1?'s':''}`;showNextChainTarget();return;}
-  const t=classById(G.seq[i]);$('gs-body').innerHTML=`${i+1}/${G.seq.length}: <b style="color:${t.color}">${esc(t.name)}</b>`;
-  gameSpeak(t.name);beep(523+i*50,.12);later(()=>playSoundChainSeq(i+1),1000);
-}
-function showNextChainTarget(){
-  if(!G.running)return;const t=classById(G.seq[G.chainPos]);
-  $('gs-body').innerHTML=`Step ${G.chainPos+1}/${G.seq.length}: <b style="color:${t.color}">${esc(t.name)}</b>`;
-}
-
-/* ===========================================================
-   GAME TICK — called every prediction
-   =========================================================== */
+/* continuous-game tick — called whenever a fresh prediction arrives */
 function gameTick(){
   if(!G.running||G.busy)return;
   const lp=getLive();if(!lp.id)return;
-  const hit=lp.id===G.target&&lp.conf>=GC; // correct & confident enough
-  const wrong=lp.id!==G.target&&lp.conf>=GC; // confidently wrong
-
   if(G.id==='flash'){
-    if(hit){G.busy=true;G.score++;G.streak++;updateGameScore();toast('✅ +1'+(G.streak>2?` 🔥${G.streak}!`:''));gameTimerBar(null);later(nextFlash,600);}
+    if(lp.id===G.target&&lp.conf>=GC){G.busy=true;G.score++;G.streak++;updateGameScore();toast('✅ +1'+(G.streak>2?` 🔥${G.streak} streak!`:''));gameTimerBar(null);later(nextFlash,600);}
   }else if(G.id==='clock'){
-    if(hit){G.busy=true;G.score++;toast('✅ +1');later(()=>{pickTarget();G.busy=false;},420);}
+    if(lp.id===G.target&&lp.conf>=GC){G.busy=true;G.score++;toast('✅ +1');later(()=>{pickTarget();G.busy=false;},420);}
   }else if(G.id==='simon'){
-    if(lp.id===G.seq[G.seqPos]&&lp.conf>=GC){G.busy=true;const t=classById(G.seq[G.seqPos]);G.seqPos++;toast(`✅ ${t.name} ${G.seqPos}/${G.seq.length}`);
-      if(G.seqPos>=G.seq.length){G.score++;updateGameScore();$('gs-body').textContent='🌟 Complete! Next…';later(simonNextRound,1000);}
+    const expect=G.seq[G.seqPos];
+    if(lp.id===expect&&lp.conf>=GC){G.busy=true;const t=classById(expect);G.seqPos++;toast(`✅ ${t.name} (${G.seqPos}/${G.seq.length})`);
+      if(G.seqPos>=G.seq.length){G.score++;updateGameScore();$('gs-body').textContent='🌟 Great memory! Next round…';later(simonNextRound,1000);}
       else later(()=>{G.busy=false;},650);}
-  }else if(G.id==='streak'){
-    if(hit){G.busy=true;G.streak++;updateStreak();toast(`🔥 ${G.streak}/5`);
-      if(G.streak>=5){G.running=false;gameOverlay('🔥 Perfect Streak!','5 in a row!','win');$('btn-game').textContent='▶ Play again';later(hideGameOverlay,2500);}
-      else later(()=>{pickTarget();G.busy=false;},600);}
-    else if(wrong){G.busy=true;G.streak=0;updateStreak();toast('💔 Streak broken!');later(()=>{pickTarget();G.busy=false;},700);}
-  }else if(G.id==='survivor'){
-    if(hit){G.busy=true;G.score++;updateLives();toast('✅ +1');later(()=>{pickTarget();G.busy=false;},500);}
-    else if(wrong){G.busy=true;G.lives--;updateLives();
-      if(G.lives<=0){G.running=false;gameOverlay('💀 Game Over',`Score: ${G.score}`,'lose');$('btn-game').textContent='▶ Play again';later(hideGameOverlay,2800);}
-      else{toast(`❌ -1 life! ${G.lives} left`);later(()=>{pickTarget();G.busy=false;},800);}
-    }
-  }else if(G.id==='blitz'){
-    if(hit){G.busy=true;G.score++;$('gs-score').textContent=`${G.score}/${G.maxRound}`;toast('✅ +1');gameTimerBar(null);later(blitzRound,300);}
-  }else if(G.id==='soundsprint'){
-    if(lp.id===G.sprintList[G.sprintIdx]&&lp.conf>=GC){G.busy=true;G.sprintIdx++;toast(`✅ ${G.sprintIdx}/${G.sprintList.length}`);later(()=>{showSprintTarget();G.busy=false;},500);}
-  }else if(G.id==='soundchain'){
-    if(lp.id===G.seq[G.chainPos]&&lp.conf>=GC){G.busy=true;const t=classById(G.seq[G.chainPos]);G.chainPos++;toast(`✅ ${t.name} (${G.chainPos}/${G.seq.length})`);
-      if(G.chainPos>=G.seq.length){G.score++;$('gs-score').textContent=`${G.score} chain${G.score>1?'s':''} done`;later(soundChainAdd,900);}
-      else later(()=>{showNextChainTarget();G.busy=false;},500);}
   }
 }
+$('btn-game').onclick=()=>{
+  if(!G.id)return;
+  if(G.running){stopGame();$('btn-game').textContent='▶ Start';$('gs-body').textContent='Stopped. Press Start to play again!';return;}
+  startSelectedGame();
+};
+$('gs-exit').onclick=exitGame;
 
 /* ===========================================================
    MODE SWITCH
@@ -1582,7 +1583,7 @@ function switchMode(m){
 function saveData(){
   try{
     const pack={};
-    ['image'].forEach(t=>{const st=S[t];
+    ['image','pose'].forEach(t=>{const st=S[t];
       pack[t]={classes:st.classes,samples:st.samples,built:st.built,key:st.key};});
     pack.sound={classes:S.sound.classes,built:false,history:S.sound.history}; // sound model not serialised
     localStorage.setItem(LS_DATA,JSON.stringify(pack));
@@ -1591,10 +1592,10 @@ function saveData(){
 function loadData(){
   const raw=localStorage.getItem(LS_DATA);if(!raw)return;
   try{const pack=JSON.parse(raw);
-    ['image','sound'].forEach(t=>{if(pack[t]){S[t].classes=pack[t].classes||[];S[t].samples=pack[t].samples||[];S[t].built=!!pack[t].built;S[t].key=pack[t].key||'';S[t].history=pack[t].history||null;}});
+    ['image','pose','sound'].forEach(t=>{if(pack[t]){S[t].classes=pack[t].classes||[];S[t].samples=pack[t].samples||[];S[t].built=!!pack[t].built;S[t].key=pack[t].key||'';S[t].history=pack[t].history||null;}});
     // rebuild KNNs from samples
-    imageKNN=imageKNN||knnClassifier.create();
-    rebuildKNN(imageKNN,S.image);
+    imageKNN=imageKNN||knnClassifier.create();poseKNN=poseKNN||knnClassifier.create();
+    rebuildKNN(imageKNN,S.image);rebuildKNN(poseKNN,S.pose);
   }catch(e){console.warn('Load failed',e);}
 }
 
@@ -1620,7 +1621,7 @@ window.toggleFeature=toggleFeature;window.setFingerCount=setFingerCount;
 
 /* rotating hero word */
 (function(){
-  const words=['see 📷','hear sounds 🔊','think for itself 🧠','solve real problems 🌟'];
+  const words=['see 📷','strike a pose 🤸','hear sounds 🔊','think for itself 🧠'];
   let i=0;const el=$('rotator-word');if(!el)return;
   setInterval(()=>{i=(i+1)%words.length;el.style.opacity=0;setTimeout(()=>{el.textContent=words[i];el.style.opacity=1;},220);},2000);
   el.style.transition='opacity .25s';el.textContent=words[0];
